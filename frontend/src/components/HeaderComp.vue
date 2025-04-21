@@ -6,6 +6,11 @@
 </template>
 
 <style scoped>
+
+    header{
+        background-color: rgb(61, 58, 58);
+    }
+
     img{
         width: 150px;
     }
