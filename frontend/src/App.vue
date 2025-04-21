@@ -1,10 +1,12 @@
 <template>
   <HeaderComp></HeaderComp>
+  <FooterComp></FooterComp>
 </template>
 
 
 <script setup lang="ts">
-  import HeaderComp from './components/HeaderComp.vue'
+  import FooterComp from './components/FooterComp.vue';
+import HeaderComp from './components/HeaderComp.vue'
 
   //A PARTIR DE AQUÍ ES LA PRUEBA DEL BACKEND
   /* 
