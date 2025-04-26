@@ -46,32 +46,4 @@ class AuthController extends AbstractController
 
         return $this->json(['message' => 'Usuario registrado correctamente.'], 201);
     }
-
-    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function login(Request $request, DocumentManager $dm): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $username = $data['username'] ?? null;
-        $password = $data['password'] ?? null;
-
-        if (!$username || !$password) {
-            return $this->json(['error' => 'Faltan campos obligatorios.'], 400);
-        }
-
-        $user = $dm->getRepository(User::class)->findOneBy(['username' => $username]);
-
-        if (!$user || !password_verify($password, $user->getPassword())) {
-            return $this->json(['error' => 'Credenciales inválidas.'], 401);
-        }
-
-        return $this->json([
-            'message' => 'Inicio de sesión correcto.',
-            'user' => [
-                'id' => (string)$user->getId(),
-                'username' => $user->getUsername(),
-                'email' => $user->getEmail(),
-            ]
-        ]);
-    }
 }
