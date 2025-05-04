@@ -55,7 +55,7 @@ const handleRegister = async () => {
   registerLoading.value = true;
   try {
     await api.post('/api/register', registerData.value);
-    await handleLogin(); // login automático tras registro
+
   } catch (err: any) {
     registerError.value = err.response?.data?.error || 'Error en el registro.';
   } finally {
