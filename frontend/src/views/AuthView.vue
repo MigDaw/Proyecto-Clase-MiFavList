@@ -58,7 +58,7 @@ const handleRegister = async () => {
   registerLoading.value = true;
   try {
     await api.post('/api/register', registerData.value);
-    toast.success('Usuario registrado correctamente 🎉');
+    toast.success('Usuario registrado correctamente 😀');
   } catch (err: any) {
     registerError.value = err.response?.data?.error || 'Error en el registro.';
   } finally {
@@ -83,6 +83,9 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+body{
+  font-family: Lexend;
+}
 .auth-container {
   display: flex;
   justify-content: space-around;
@@ -105,6 +108,7 @@ input {
   padding: 8px;
   margin: 10px 0;
   font-size: 1rem;
+  font-family: Lexend;
 }
 
 button {
@@ -116,6 +120,7 @@ button {
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
+  font-family: Lexend;
 }
 
 button:disabled {
