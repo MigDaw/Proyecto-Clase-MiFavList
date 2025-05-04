@@ -38,6 +38,9 @@ import { ref } from 'vue';
 import api from '../axios';
 import { useRouter } from 'vue-router';
 import { username } from '../stores/authStore';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const router = useRouter();
 
@@ -55,7 +58,7 @@ const handleRegister = async () => {
   registerLoading.value = true;
   try {
     await api.post('/api/register', registerData.value);
-
+    toast.success('Usuario registrado correctamente 🎉');
   } catch (err: any) {
     registerError.value = err.response?.data?.error || 'Error en el registro.';
   } finally {
