@@ -1,5 +1,5 @@
 <template>
-    <footer>Miguel Rico Pérez - Derechos reservados</footer>
+    <footer>Miguel Rico Pérez - Derechos reservados &copy;</footer>
 </template>
 
 

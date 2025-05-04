@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import api from '../axios';
 import { useRouter } from 'vue-router';
 import { username } from '../stores/authStore';
+import imagenGenerica from '../assets/Imagen-generica.png'
 
 const menuOpen = ref(false);
 const router = useRouter();
@@ -35,6 +36,7 @@ onMounted(async () => {
 
     <div v-if="username" class="user-wrapper">
       <div class="user-display" @click="toggleMenu">
+        <img :src="imagenGenerica" alt="Foto de perfil" class="img-user"/>
         {{ username }}
         <span class="chevron">{{ menuOpen ? '▲' : '▼' }}</span>
       </div>
@@ -54,6 +56,10 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
+}
+
+.img-user{
+  width: 40px;
 }
 
 img {
