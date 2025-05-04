@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AuthView from '../views/Authview.vue';
-import ProfileView from '../views/Profileview.vue';
-import ContentView from '../views/Contentview.vue';
+import AuthView from '../views/AuthView.vue';
+import ProfileView from '../views/ProfileView.vue';
+import ContentView from '../views/ContentView.vue';
 //import UsuariosView from '../views/UsuariosView.vue';
 import api from '../axios';
 
