@@ -98,7 +98,7 @@ const handleLogin = async () => {
 
 input {
   display: block;
-  width: 100%;
+  width: 97.5%;
   padding: 8px;
   margin: 10px 0;
   font-size: 1rem;
