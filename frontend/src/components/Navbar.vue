@@ -31,7 +31,7 @@
   .navbar {
     display: flex;
     gap: 1rem;
-    background-color: #3b3b3b;
+    background-color: #484545;
     padding: 10px;
     justify-content: center;
   }

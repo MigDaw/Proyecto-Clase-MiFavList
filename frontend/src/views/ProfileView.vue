@@ -29,7 +29,7 @@
   import { onMounted, ref } from 'vue';
   import api from '../axios';
   import { useRouter } from 'vue-router';
-  
+  import imagenGenerica from '../assets/Imagen-generica.png'
   const router = useRouter();
   
   const user = ref<{ id: string; username: string; email: string } | null>(null);
@@ -40,7 +40,7 @@
   const isChatPublic = ref(false);
   
   // Foto de perfil (por ahora imagen genérica)
-  const profilePicture = 'https://via.placeholder.com/150';
+  const profilePicture = imagenGenerica;
   
   onMounted(async () => {
     try {
