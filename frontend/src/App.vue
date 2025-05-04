@@ -1,12 +1,16 @@
 <template>
   <HeaderComp></HeaderComp>
+  <Navbar></Navbar>
+  <RouterView></RouterView>
   <FooterComp></FooterComp>
 </template>
 
 
 <script setup lang="ts">
-  import FooterComp from './components/FooterComp.vue';
+  import { RouterView } from 'vue-router';
+import FooterComp from './components/FooterComp.vue';
 import HeaderComp from './components/HeaderComp.vue'
+import Navbar from './components/Navbar.vue';
 
   //A PARTIR DE AQUÍ ES LA PRUEBA DEL BACKEND
   /* 
