@@ -4,6 +4,9 @@ import api from '../axios';
 import { useRouter } from 'vue-router';
 import { username } from '../stores/authStore';
 import imagenGenerica from '../assets/Imagen-generica.png'
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 
 const menuOpen = ref(false);
 const router = useRouter();
@@ -16,6 +19,7 @@ const logout = async () => {
   await api.post('/api/logout', {}, { withCredentials: true });
   username.value = null;
   router.push('/');
+  toast.success('Has cerrado sesión');
 };
 
 onMounted(async () => {
