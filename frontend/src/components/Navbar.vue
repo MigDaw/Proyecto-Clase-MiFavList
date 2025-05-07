@@ -1,5 +1,5 @@
 <template>
-    <nav v-if="isLoggedIn" class="navbar">
+    <nav v-if="userStore" class="navbar">
       <router-link to="/contenido/peliculas">Películas</router-link>
       <router-link to="/contenido/series">Series</router-link>
       <router-link to="/contenido/libros">Libros</router-link>
@@ -12,19 +12,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import api from '../axios';
-  
-  const isLoggedIn = ref(false);
-  
-  onMounted(async () => {
-    try {
-      const res = await api.get('/api/me');
-      isLoggedIn.value = !!res.data;
-    } catch {
-      isLoggedIn.value = false;
-    }
-  });
+    import { userStore } from '../stores/authStore';
   </script>
   
   <style scoped>

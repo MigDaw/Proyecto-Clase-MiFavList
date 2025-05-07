@@ -37,7 +37,7 @@
 import { ref } from 'vue';
 import api from '../axios';
 import { useRouter } from 'vue-router';
-import { username } from '../stores/authStore';
+import { userStore } from '../stores/authStore';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
@@ -71,8 +71,11 @@ const handleLogin = async () => {
   loginLoading.value = true;
   try {
     await api.post('/api/login', loginData.value);
-    const res = await api.get('/api/me', { withCredentials: true });
-    username.value = res.data.username;
+    const res = await api.get('/api/me', { 
+      withCredentials: true 
+    });
+    userStore.value = res.data;
+    console.log(res.data)
     router.push('/perfil');
   } catch (err: any) {
     loginError.value = err.response?.data?.error || 'Error al iniciar sesión.';

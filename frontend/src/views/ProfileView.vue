@@ -2,8 +2,8 @@
     <div class="profile">
       <div class="profile-card">
         <img :src="profilePicture" alt="Foto de perfil" />
-        <h2>{{ user?.username }}</h2>
-        <p>{{ user?.email }}</p>
+        <h2>{{ userStore?.username }}</h2>
+        <p>{{ userStore?.email }}</p>
         <p><strong>Contenido subido:</strong> {{ contentCount }}</p>
   
         <div class="toggles">
@@ -26,13 +26,11 @@
   </template>
   
   <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { ref } from 'vue';
   import api from '../axios';
-  import { useRouter } from 'vue-router';
   import imagenGenerica from '../assets/Imagen-generica.png'
-  const router = useRouter();
+  import { userStore } from '../stores/authStore';
   
-  const user = ref<{ id: string; username: string; email: string } | null>(null);
   const contentCount = ref(0);
   
   // Toggles
@@ -42,35 +40,16 @@
   // Foto de perfil (por ahora imagen genérica)
   const profilePicture = imagenGenerica;
   
-  onMounted(async () => {
-    try {
-      const me = await api.get('/api/me');
-      user.value = me.data;
-  
-      // Obtener configuración de visibilidad y contenido del usuario
-      /* const settings = await api.get(`/api/user/${user.value.id}/settings`);
-      isProfilePublic.value = settings.data.profilePublic;
-      isChatPublic.value = settings.data.chatPublic; */
-  
-      // Contar contenido
-      /* const content = await api.get(`/api/user/${user.value.id}/content`);
-      contentCount.value = content.data.count; */
-    } catch (error) {
-      console.error(error);
-      router.push('/');
-    }
-  });
-  
   const toggleProfile = async () => {
     isProfilePublic.value = !isProfilePublic.value;
-    await api.put(`/api/user/${user.value?.id}/settings`, {
+    await api.put(`/api/user/${userStore.value?.id}/settings`, {
       profilePublic: isProfilePublic.value,
     });
   };
   
   const toggleChat = async () => {
     isChatPublic.value = !isChatPublic.value;
-    await api.put(`/api/user/${user.value?.id}/settings`, {
+    await api.put(`/api/user/${userStore.value?.id}/settings`, {
       chatPublic: isChatPublic.value,
     });
   };

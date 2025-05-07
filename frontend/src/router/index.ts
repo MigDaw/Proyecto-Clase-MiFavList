@@ -3,7 +3,7 @@ import AuthView from '../views/AuthView.vue';
 import ProfileView from '../views/ProfileView.vue';
 import ContentView from '../views/ContentView.vue';
 //import UsuariosView from '../views/UsuariosView.vue';
-import api from '../axios';
+import { userStore } from '../stores/authStore';
 
 const routes = [
   { path: '/', name: 'auth', component: AuthView },
@@ -19,9 +19,8 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   try {
-    const res = await api.get('/api/me');
-    const isLoggedIn = !!res.data;
-
+    const isLoggedIn = userStore.value != null;
+    console.log("el pepe")
     if (to.path === '/' && isLoggedIn) {
       return next('/perfil'); // Redirige si está logueado
     }

@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import api from '../axios';
 import { useRouter } from 'vue-router';
-import { username } from '../stores/authStore';
+import { userStore } from '../stores/authStore';
 import imagenGenerica from '../assets/Imagen-generica.png'
 import { useToast } from 'vue-toastification';
 
@@ -17,7 +17,7 @@ const toggleMenu = () => {
 
 const logout = async () => {
   await api.post('/api/logout', {}, { withCredentials: true });
-  username.value = null;
+  userStore.value = null;
   router.push('/');
   toast.success('Has cerrado sesión');
 };
@@ -27,9 +27,9 @@ onMounted(async () => {
     const response = await api.get('/api/me', {
       withCredentials: true,
     });
-    username.value = response.data.username;
+    userStore.value = response.data;
   } catch {
-    username.value = null;
+    userStore.value = null;
   }
 });
 </script>
@@ -38,10 +38,10 @@ onMounted(async () => {
   <header>
     <img src="../assets/Logo 1.png" alt="logo" />
 
-    <div v-if="username" class="user-wrapper">
+    <div v-if="userStore" class="user-wrapper">
       <div class="user-display" @click="toggleMenu">
         <img :src="imagenGenerica" alt="Foto de perfil" class="img-user"/>
-        {{ username }}
+        {{ userStore.username }}
         <span class="chevron">{{ menuOpen ? '▲' : '▼' }}</span>
       </div>
 
