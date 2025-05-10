@@ -40,7 +40,7 @@ onMounted(async () => {
 
     <div v-if="userStore" class="user-wrapper">
       <div class="user-display" @click="toggleMenu">
-        <img :src="imagenGenerica" alt="Foto de perfil" class="img-user"/>
+        <img :src="userStore?.profilePic ? `http://localhost:8080${userStore.profilePic}` : imagenGenerica" alt="Foto de perfil" class="img-user" />
         {{ userStore.username }}
         <span class="chevron">{{ menuOpen ? '▲' : '▼' }}</span>
       </div>
