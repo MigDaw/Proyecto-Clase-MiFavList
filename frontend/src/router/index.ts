@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AuthView from '../views/AuthView.vue';
+import LoginView from '../views/LoginView.vue';
 import ProfileView from '../views/ProfileView.vue';
 import ContentView from '../views/ContentView.vue';
 //import UsuariosView from '../views/UsuariosView.vue';
 import { userStore } from '../stores/authStore';
+import RegisterView from '../views/RegisterView.vue';
 
 const routes = [
-  { path: '/', name: 'auth', component: AuthView },
+  { path: '/', name: 'Login', component: LoginView },
+  {path: '/registro', name: 'Register', component: RegisterView},
   { path: '/perfil', name: 'perfil', component: ProfileView, meta: { requiresAuth: true } },
   { path: '/contenido/:tipo', name: 'contenido', component: ContentView },
   //{ path: '/usuarios', name: 'usuarios', component: UsuariosView },

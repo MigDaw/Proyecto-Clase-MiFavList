@@ -1,34 +1,17 @@
 <template>
   <div class="auth-container">
     <section class="form-box">
-      <h2>Registro</h2>
-      <form @submit.prevent="handleRegister">
-        <input type="text" v-model="registerData.username" placeholder="Nombre de usuario" required />
-        <input type="email" v-model="registerData.email" placeholder="Correo electrónico" required />
-        <input type="password" v-model="registerData.password" placeholder="Contraseña" required />
-        
-        <button type="submit" :disabled="registerLoading">
-          <span v-if="registerLoading">Registrando...</span>
-          <span v-else>Registrarse</span>
-        </button>
-        
-        <p v-if="registerError" class="error">{{ registerError }}</p>
-      </form>
-    </section>
-
-    <section class="form-box">
       <h2>Login</h2>
       <form @submit.prevent="handleLogin">
         <input type="text" v-model="loginData.username" placeholder="Nombre de usuario" required />
-        <input type="password" v-model="loginData.password" placeholder="Contraseña" required />
-
+        <input type="password" v-model="loginData.password" placeholder="Contraseña" required /><br>
         <button type="submit" :disabled="loginLoading">
           <span v-if="loginLoading">Iniciando...</span>
           <span v-else>Iniciar Sesión</span>
         </button>
-        
         <p v-if="loginError" class="error">{{ loginError }}</p>
-      </form>
+      </form><br>
+      <router-link to="/registro" class="enlace">¿No tienes cuenta? Regístrate</router-link>
     </section>
   </div>
 </template>
@@ -38,44 +21,19 @@ import { ref } from 'vue';
 import api from '../axios';
 import { useRouter } from 'vue-router';
 import { userStore } from '../stores/authStore';
-import { useToast } from 'vue-toastification';
-
-const toast = useToast();
 
 const router = useRouter();
-
-const registerData = ref({ username: '', email: '', password: '' });
 const loginData = ref({ username: '', password: '' });
-
-const registerError = ref('');
 const loginError = ref('');
-
-const registerLoading = ref(false);
 const loginLoading = ref(false);
-
-const handleRegister = async () => {
-  registerError.value = '';
-  registerLoading.value = true;
-  try {
-    await api.post('/api/register', registerData.value);
-    toast.success('Usuario registrado correctamente 😀');
-  } catch (err: any) {
-    registerError.value = err.response?.data?.error || 'Error en el registro.';
-  } finally {
-    registerLoading.value = false;
-  }
-};
 
 const handleLogin = async () => {
   loginError.value = '';
   loginLoading.value = true;
   try {
     await api.post('/api/login', loginData.value);
-    const res = await api.get('/api/me', { 
-      withCredentials: true 
-    });
+    const res = await api.get('/api/me', { withCredentials: true });
     userStore.value = res.data;
-    console.log(res.data)
     router.push('/perfil');
   } catch (err: any) {
     loginError.value = err.response?.data?.error || 'Error al iniciar sesión.';
@@ -85,24 +43,27 @@ const handleLogin = async () => {
 };
 </script>
 
+
 <style scoped>
 body{
   font-family: Lexend;
 }
+
 .auth-container {
+  min-height: 75vh;
   display: flex;
-  justify-content: space-around;
-  padding: 40px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-box {
-  width: 45%;
+  width: 100%;
+  max-width: 400px;
   min-width: 300px;
-  padding: 20px;
+  padding: 24px 32px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 input {
@@ -138,5 +99,16 @@ button:hover:not(:disabled) {
 .error {
   color: red;
   margin-top: 10px;
+}
+
+.enlace {
+  color: #2381e0;
+  text-decoration: underline;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.enlace:hover {
+  color: #4882da;
 }
 </style>
