@@ -61,7 +61,7 @@ body{
   max-width: 400px;
   min-width: 300px;
   padding: 24px 32px;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   border-radius: 10px;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
 }

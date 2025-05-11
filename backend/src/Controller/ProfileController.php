@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ProfileController extends AbstractController
 {
@@ -78,4 +79,43 @@ class ProfileController extends AbstractController
 
         return $this->json(['message' => 'Foto de perfil actualizada.', 'profilePic' => $user->getProfilePic()]);
     }
+
+    #[Route('/api/profile/password', name: 'update_profile_password', methods: ['PUT'])]
+    public function updatePassword(
+        Request $request,
+        SessionInterface $session,
+        DocumentManager $dm,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
+        $userId = $session->get('user_id');
+
+        if (!$userId) {
+            return $this->json(['error' => 'No hay sesión activa.'], 401);
+        }
+
+        $user = $dm->getRepository(User::class)->find($userId);
+        if (!$user) {
+            return $this->json(['error' => 'Usuario no encontrado.'], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $currentPassword = $data['currentPassword'] ?? null;
+        $newPassword = $data['newPassword'] ?? null;
+
+        if (!$currentPassword || !$newPassword) {
+            return $this->json(['error' => 'Faltan datos requeridos.'], 400);
+        }
+
+        // Verifica la contraseña actual
+        if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+            return $this->json(['error' => 'La contraseña actual es incorrecta.'], 400);
+        }
+        
+        $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+        $user->setPassword($hashedPassword);
+        $dm->flush();
+
+        return $this->json(['message' => 'Contraseña actualizada correctamente.']);
+    }
+
 }
