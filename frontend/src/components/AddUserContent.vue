@@ -11,13 +11,6 @@
       <label for="genre">Género:</label>
       <input v-model="genre" type="text" required placeholder="Género" />
 
-      <label for="type">Tipo:</label>
-      <select v-model="type" required>
-        <option value="peliculas">Película</option>
-        <option value="series">Serie</option>
-        <option value="libros">Libro</option>
-      </select>
-
       <label for="image">Imagen:</label>
       <input type="file" @change="onImageChange" />
 
@@ -46,10 +39,11 @@ const toast = useToast();
 const showForm = ref(false);
 const title = ref("");
 const genre = ref("");
-const type = ref("pelicula");
 const status = ref("pendiente");
 const rating = ref(0);
 const imageFile = ref<File | null>(null);
+const props = defineProps<{ tipo: string }>();
+const emit = defineEmits(['content-added']);
 
 const onImageChange = (e: Event) => {
   const files = (e.target as HTMLInputElement).files;
@@ -77,7 +71,7 @@ const addContent = async () => {
     const contentRes = await api.post("/api/content", {
       title: title.value,
       genre: genre.value,
-      type: type.value,
+      type: props.tipo,
       image: imagePath,
     });
 
@@ -90,10 +84,11 @@ const addContent = async () => {
     });
 
     toast.success("Contenido añadido correctamente");
+    emit("content-added");
+    
     // Limpieza
     title.value = "";
     genre.value = "";
-    type.value = "pelicula";
     status.value = "pendiente";
     rating.value = 0;
     imageFile.value = null;

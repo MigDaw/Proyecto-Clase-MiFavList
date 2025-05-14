@@ -20,36 +20,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import api from '../axios'; // Asegúrate de tener configurado tu cliente axios
-import defaultImage from '../assets/Imagen-generica.png';
+  import { ref, computed, onMounted , watch} from 'vue';
+  import { useRoute } from 'vue-router';
+  import api from '../axios'; // Asegúrate de tener configurado tu cliente axios
+  import defaultImage from '../assets/Imagen-generica.png';
 
-const route = useRoute();
-const tipo = computed(() => route.params.tipo as string);
+  const route = useRoute();
+  const tipo = computed(() => route.params.tipo as string);
+  const props = defineProps<{ tipo: string; refresh?: number }>();
 
-const capitalizedTipo = computed(() =>
-  tipo.value.charAt(0).toUpperCase() + tipo.value.slice(1)
-);
+  const capitalizedTipo = computed(() =>
+    tipo.value.charAt(0).toUpperCase() + tipo.value.slice(1)
+  );
 
-const allContent = ref<any[]>([]);
-const filteredContent = computed(() =>
-  allContent.value.filter((item) => item.type === tipo.value)
-);
+  const allContent = ref<any[]>([]);
+  const filteredContent = computed(() =>
+    allContent.value.filter((item) => item.type === tipo.value)
+  );
 
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('es-ES');
-};
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('es-ES');
+  };
 
-onMounted(async () => {
-  try {
-    const response = await api.get('/api/user-content');
-    allContent.value = response.data;
-  } catch (error) {
-    console.error('Error cargando contenido del usuario:', error);
-  }
-});
+  const fetchContent = async () => {
+    try {
+      const response = await api.get('/api/user-content');
+      allContent.value = response.data;
+    } catch (error) {
+      console.error('Error cargando contenido del usuario:', error);
+    }
+  };
+
+  onMounted(fetchContent);
+
+  // Refresca la lista cuando cambie la prop refresh
+  watch(() => props.refresh, fetchContent);
 </script>
 
 <style scoped>
