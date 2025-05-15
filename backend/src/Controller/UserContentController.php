@@ -76,4 +76,41 @@ class UserContentController extends AbstractController
     }
 
     //#[Route('/api/user-content/{userId}', name: 'get_user_content_by_user', methods: ['GET'])]
+    
+    #[Route('/api/user-content/{id}', name: 'update_user_content', methods: ['PUT'])]
+    public function updateUserContent(
+        string $id,
+        Request $request,
+        DocumentManager $dm,
+        SessionInterface $session
+    ): JsonResponse {
+        $userId = $session->get('user_id');
+        if (!$userId) {
+            return $this->json(['error' => 'No autenticado.'], 401);
+        }
+
+        /** @var \App\Document\UserContent|null $userContent */
+        $userContent = $dm->getRepository(UserContent::class)->find($id);
+        if (!$userContent) {
+            return $this->json(['error' => 'Contenido de usuario no encontrado.'], 404);
+        }
+
+        // Opcional: verifica que el userId coincida con el del UserContent
+        if ($userContent->getUser()->getId() !== $userId) {
+            return $this->json(['error' => 'No autorizado.'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (isset($data['status'])) {
+            $userContent->setStatus($data['status']);
+        }
+        if (array_key_exists('rating', $data)) {
+            $userContent->setRating($data['rating']);
+        }
+
+        $dm->flush();
+
+        return $this->json(['message' => 'Contenido de usuario actualizado.']);
+    }
 }

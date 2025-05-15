@@ -21,8 +21,15 @@
         <option value="pendiente">Pendiente</option>
       </select>
 
-      <label for="rating">Valoración:</label>
-      <input v-model.number="rating" type="number" min="0" max="10" />
+      <!-- Solo muestra el input si el estado es "completado" -->
+      <label v-if="status === 'completado'" for="rating">Valoración:</label>
+      <input
+        v-if="status === 'completado'"
+        v-model.number="rating"
+        type="number"
+        min="0"
+        max="10"
+      />
 
       <button type="submit">Añadir</button>
     </form>
