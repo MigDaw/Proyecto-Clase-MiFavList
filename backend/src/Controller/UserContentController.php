@@ -113,4 +113,32 @@ class UserContentController extends AbstractController
 
         return $this->json(['message' => 'Contenido de usuario actualizado.']);
     }
+
+    #[Route('/api/user-content/{id}', name: 'delete_user_content', methods: ['DELETE'])]
+    public function deleteUserContent(
+        string $id,
+        DocumentManager $dm,
+        SessionInterface $session
+    ): JsonResponse {
+        $userId = $session->get('user_id');
+        if (!$userId) {
+            return $this->json(['error' => 'No autenticado.'], 401);
+        }
+
+        /** @var \App\Document\UserContent|null $userContent */
+        $userContent = $dm->getRepository(UserContent::class)->find($id);
+        if (!$userContent) {
+            return $this->json(['error' => 'Contenido de usuario no encontrado.'], 404);
+        }
+
+        // Verifica que el contenido pertenezca al usuario autenticado
+        if ($userContent->getUser()->getId() !== $userId) {
+            return $this->json(['error' => 'No autorizado.'], 403);
+        }
+
+        $dm->remove($userContent);
+        $dm->flush();
+
+        return $this->json(['message' => 'Contenido de usuario eliminado.']);
+    }
 }
