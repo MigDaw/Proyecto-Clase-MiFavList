@@ -41,14 +41,13 @@
         </div>
         <div v-else>
           <p>Estado: {{ item.status }}</p>
-          <p v-if="item.status !== 'completado'">Nota: {{ item.rating ?? '-' }}/10</p>
-          <p v-else>Valoración: {{ item.rating }}/10</p>
+          <p v-if="item.status === 'completado' && item.rating !== null">Valoración: {{ item.rating }}/10</p>
           <p>Añadido el: {{ formatDate(item.addedAt) }}</p>
           <img
             :src="iconoEdit"
             alt="Editar"
             class="edit-icon"
-            @click="editingId = item.id"
+            @click="startEdit(item)"
             title="Editar"
           />
         </div>
@@ -73,6 +72,8 @@
   const props = defineProps<{ tipo: string; refresh?: number }>();
   const editingId = ref<string | null>(null);
 
+  const previousData = ref<{ status: string;rating: number | null;} | null>(null);
+
   const capitalizedTipo = computed(() =>
     tipo.value.charAt(0).toUpperCase() + tipo.value.slice(1)
   );
@@ -96,6 +97,14 @@
     }
   };
 
+  const startEdit = (item: any) => {
+  editingId.value = item.id;
+  previousData.value = {
+    status: item.status,
+    rating: item.rating,
+  };
+};
+
   const updateUserContent = async (item: any, newStatus?: string, newRating?: number) => {
   try {
     await api.put(`/api/user-content/${item.id}`, {
@@ -111,13 +120,25 @@
 
 
   const saveEdit = async (item: any) => {
-    await updateUserContent(item, item.status, item.rating);
-    editingId.value = null;
-  };
+  // Si el estado no es 'completado', borra la nota antes de guardar
+  if (item.status !== 'completado') {
+    item.rating = null;
+  }
+  await updateUserContent(item, item.status, item.rating);
+  editingId.value = null;
+};
 
   const cancelEdit = () => {
-    editingId.value = null;
-  };
+  if (editingId.value && previousData.value) {
+    // Busca el item que se estaba editando
+    const item = allContent.value.find((i) => i.id === editingId.value);
+    if (item) {
+      item.status = previousData.value.status;
+      item.rating = previousData.value.rating;
+    }
+  }
+  editingId.value = null;
+};
 
   onMounted(fetchContent);
 
