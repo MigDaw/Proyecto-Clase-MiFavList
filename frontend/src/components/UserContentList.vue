@@ -43,21 +43,22 @@
           <p>Estado: {{ item.status }}</p>
           <p v-if="item.status === 'completado' && item.rating !== null">Valoración: {{ item.rating }}/10</p>
           <p>Añadido el: {{ formatDate(item.addedAt) }}</p>
-          <img
-            :src="iconoEdit"
-            alt="Editar"
-            class="edit-icon"
-            @click="startEdit(item)"
-            title="Editar"
-          />
-          <img
-            :src="iconoDelete"
-            alt="Eliminar"
-            class="edit-icon"
-            style="margin-left: 10px"
-            @click="openDeleteModal(item)"
-            title="Eliminar"
-          />
+          <div class="icon-actions">
+            <img
+              :src="iconoEdit"
+              alt="Editar"
+              class="edit-icon"
+              @click="startEdit(item)"
+              title="Editar"
+            />
+            <img
+              :src="iconoDelete"
+              alt="Eliminar"
+              class="edit-icon"
+              @click="openDeleteModal(item)"
+              title="Eliminar"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -209,18 +210,6 @@
     border-radius: 4px;
   }
 
-  .content-card .edit-icon {
-    margin-top: 20px;
-    cursor: pointer;
-    width: 24px;
-    display: flex;
-    transition: transform 0.2s;
-  }
-
-  .content-card .edit-icon:hover {
-    transform: scale(1.15);
-  }
-
   .content-card .status-select {
     font-family: Lexend;
     margin: 10px 0;
@@ -280,5 +269,22 @@
     cursor: pointer;
     font-family: Lexend;
     font-size: 1rem;
+  }
+
+  .icon-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  .icon-actions .edit-icon {
+    width: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .icon-actions .edit-icon:hover {
+    transform: scale(1.15);
   }
 </style>
