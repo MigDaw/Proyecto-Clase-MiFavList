@@ -1,7 +1,8 @@
 <template>
   <div>
-    <UserContentList :tipo="tipo" :refresh="refreshKey" />
     <AddUserContent :tipo="tipo" @content-added="refreshList" />
+    <UserContentList :tipo="tipo" :refresh="refreshKey" />
+    
   </div>
 </template>
 

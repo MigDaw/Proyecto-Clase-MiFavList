@@ -1,38 +1,44 @@
 <template>
   <div class="add-user-content">
-    <button @click="showForm = !showForm" class="toggle-button-addContent">
-      {{ showForm ? "Cancelar" : "Añadir contenido" }}
+    <button @click="showForm = true" class="toggle-button-addContent">
+      Añadir contenido
     </button>
 
-    <form v-if="showForm" class="form-container" @submit.prevent="addContent">
-      <label for="title">Título:</label>
-      <input v-model="title" type="text" required placeholder="Título" />
+    <div v-if="showForm" class="modal-overlay">
+      <div class="modal-content">
+        <form class="form-container" @submit.prevent="addContent">
+          <label for="title">Título:</label>
+          <input v-model="title" type="text" required placeholder="Título" />
 
-      <label for="genre">Género:</label>
-      <input v-model="genre" type="text" required placeholder="Género" />
+          <label for="genre">Género:</label>
+          <input v-model="genre" type="text" required placeholder="Género" />
 
-      <label for="image">Imagen:</label>
-      <input type="file" @change="onImageChange" />
+          <label for="image">Imagen:</label>
+          <input type="file" @change="onImageChange" />
 
-      <label for="status">Estado:</label>
-      <select v-model="status">
-        <option value="viendo">Viendo</option>
-        <option value="completado">Completado</option>
-        <option value="pendiente">Pendiente</option>
-      </select>
+          <label for="status">Estado:</label>
+          <select v-model="status">
+            <option value="viendo">Viendo</option>
+            <option value="completado">Completado</option>
+            <option value="pendiente">Pendiente</option>
+          </select>
 
-      <!-- Solo muestra el input si el estado es "completado" -->
-      <label v-if="status === 'completado'" for="rating">Valoración:</label>
-      <input
-        v-if="status === 'completado'"
-        v-model.number="rating"
-        type="number"
-        min="0"
-        max="10"
-      />
+          <label v-if="status === 'completado'" for="rating">Valoración:</label>
+          <input
+            v-if="status === 'completado'"
+            v-model.number="rating"
+            type="number"
+            min="0"
+            max="10"
+          />
 
-      <button type="submit">Añadir</button>
-    </form>
+          <div class="modal-actions">
+            <button type="submit">Añadir</button>
+            <button type="button" @click="showForm = false">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -126,28 +132,45 @@ const addContent = async () => {
   align-items: center;
 }
 
-.form-container {
-  margin: 16px;
-  background: #fff;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #222;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 24px 32px;
-  min-width: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+.form-container {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .form-container label {
-  font-weight: 00;
+  font-weight: 600;
   margin-bottom: 4px;
-  color: #333;
+  color: white;;
 }
 
 .form-container input[type="text"],
 .form-container input[type="number"],
 .form-container select {
-  padding: 8px 10px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
@@ -168,9 +191,9 @@ const addContent = async () => {
   padding: 0;
 }
 
-.form-container button[type="submit"] {
-  margin-top: 10px;
-  padding: 10px 0;
+.form-container button[type="submit"],
+.modal-actions button {
+  padding: 10px;
   background: #0078d4;
   color: #fff;
   border: none;
@@ -181,7 +204,14 @@ const addContent = async () => {
   transition: background 0.2s;
 }
 
-.form-container button[type="submit"]:hover {
+.form-container button[type="submit"]:hover,
+.modal-actions button:hover {
   background: #005fa3;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 </style>
