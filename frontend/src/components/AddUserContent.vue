@@ -33,8 +33,11 @@
           />
 
           <div class="modal-actions">
-            <button type="submit">Añadir</button>
-            <button type="button" @click="showForm = false">Cancelar</button>
+            <button type="submit" :disabled="loading">Añadir</button>
+            <button type="button" @click="showForm = false" :disabled="loading">Cancelar</button>
+          </div>
+          <div v-if="loading" class="spinner-container">
+            <span class="spinner"></span>
           </div>
         </form>
       </div>
@@ -46,6 +49,7 @@
 import { ref } from "vue";
 import api from "../axios";
 import { useToast } from "vue-toastification";
+import '../assets/estilos/spinner.css';
 
 const toast = useToast();
 
@@ -57,6 +61,7 @@ const rating = ref(0);
 const imageFile = ref<File | null>(null);
 const props = defineProps<{ tipo: string }>();
 const emit = defineEmits(['content-added']);
+const loading = ref(false);
 
 const onImageChange = (e: Event) => {
   const files = (e.target as HTMLInputElement).files;
@@ -64,6 +69,7 @@ const onImageChange = (e: Event) => {
 };
 
 const addContent = async () => {
+  loading.value = true;
   let imagePath = "";
   if (imageFile.value) {
     const formData = new FormData();
@@ -75,12 +81,12 @@ const addContent = async () => {
       imagePath = uploadRes.data.image;
     } catch (err) {
       toast.error("Error subiendo la imagen.");
+      loading.value = false;
       return;
     }
   }
 
   try {
-    // 1. Crear el contenido
     const contentRes = await api.post("/api/content", {
       title: title.value,
       genre: genre.value,
@@ -88,7 +94,6 @@ const addContent = async () => {
       image: imagePath,
     });
 
-    // 2. Añadir el contenido al usuario
     const contentId = contentRes.data.id;
     await api.post("/api/user-content", {
       contentId,
@@ -98,7 +103,7 @@ const addContent = async () => {
 
     toast.success("Contenido añadido correctamente");
     emit("content-added");
-    
+
     // Limpieza
     title.value = "";
     genre.value = "";
@@ -109,6 +114,7 @@ const addContent = async () => {
   } catch (err) {
     toast.error("Error al añadir contenido.");
   }
+  loading.value = false;
 };
 </script>
 
@@ -213,5 +219,20 @@ const addContent = async () => {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.form-container button[disabled],
+.modal-actions button[disabled] {
+  background: #888 !important;
+  color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
 }
 </style>
