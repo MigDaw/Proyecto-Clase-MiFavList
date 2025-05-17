@@ -35,13 +35,17 @@
             <span>/10</span>
           </div>
           <div class="edit-actions">
-            <button @click="saveEdit(item)">Guardar</button>
-            <button @click="cancelEdit">Cancelar</button>
+            <button @click="saveEdit(item)" :disabled="loadingEditId === item.id">Guardar</button>
+            <button @click="cancelEdit" :disabled="loadingEditId === item.id">Cancelar</button>
+          </div>
+          <div v-if="loadingEditId === item.id" class="spinner-container">
+            <span class="spinner"></span>
           </div>
         </div>
         <div v-else>
           <p>Estado: {{ item.status }}</p>
           <p v-if="item.status === 'completado' && item.rating !== null">Valoración: {{ item.rating }}/10</p>
+          <p v-else>Valoración: -/10</p>
           <p>Añadido el: {{ formatDate(item.addedAt) }}</p>
           <div class="icon-actions">
             <img
@@ -67,8 +71,11 @@
   <div class="modal-content">
     <p>¿Seguro que deseas eliminar este contenido?</p>
     <div class="modal-actions">
-      <button @click="confirmDelete">Confirmar</button>
-      <button @click="showDeleteModal = false">Cancelar</button>
+      <button @click="confirmDelete" :disabled="loadingDelete">Confirmar</button>
+      <button @click="showDeleteModal = false" :disabled="loadingDelete">Cancelar</button>
+    </div>
+    <div v-if="loadingDelete" class="spinner-container">
+      <span class="spinner"></span>
     </div>
   </div>
 </div>
@@ -82,13 +89,16 @@
   import defaultImage from '../assets/Imagen-generica.png';
   import iconoEdit from '../assets/icono-edit.svg';
   import iconoDelete from '../assets/icono-delete.svg';
-
+  import '../assets/estilos/spinner.css';
+  
   const toast = useToast();
   const route = useRoute();
 
   const tipo = computed(() => route.params.tipo as string);
   const props = defineProps<{ tipo: string; refresh?: number }>();
   const editingId = ref<string | null>(null);
+  const loadingDelete = ref(false);
+  const loadingEditId = ref<string | null>(null);
 
   const showDeleteModal = ref(false);
   const itemToDelete = ref<any>(null);
@@ -140,12 +150,13 @@
   };
 
   const saveEdit = async (item: any) => {
-    // Si el estado no es 'completado', borra la nota antes de guardar
+    loadingEditId.value = item.id;
     if (item.status !== 'completado') {
       item.rating = null;
     }
     await updateUserContent(item, item.status, item.rating);
     editingId.value = null;
+    loadingEditId.value = null;
   };
 
   const cancelEdit = () => {
@@ -167,13 +178,15 @@
 
   const confirmDelete = async () => {
     if (!itemToDelete.value) return;
+    loadingDelete.value = true;
     try {
       await api.delete(`/api/user-content/${itemToDelete.value.id}`);
-      toast.success('Contenido eliminado');
+      toast.success('Contenido eliminado, espera unos segundos y lo verás reflejado.');
       fetchContent();
     } catch (error) {
       toast.error('Error al eliminar');
     }
+    loadingDelete.value = false;
     showDeleteModal.value = false;
     itemToDelete.value = null;
   };
@@ -237,6 +250,14 @@
     cursor: pointer;
 }
 
+.edit-actions button[disabled],
+.edit-actions button:disabled {
+  background: #888 !important;
+  color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -271,6 +292,14 @@
     font-size: 1rem;
   }
 
+  .modal-actions button[disabled] {
+  margin-top:10px;
+  background: #888 !important;
+  color: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
   .icon-actions {
     display: flex;
     justify-content: space-between;
@@ -287,4 +316,17 @@
   .icon-actions .edit-icon:hover {
     transform: scale(1.15);
   }
+
+  .spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px; /* Aumenta el margen superior */
+}
+
+.spinner {
+  width: 24px !important;
+  height: 24px !important;
+  border-width: 3px !important;
+}
 </style>

@@ -101,7 +101,7 @@ const addContent = async () => {
       rating: rating.value,
     });
 
-    toast.success("Contenido añadido correctamente");
+    toast.success("Contenido añadido correctamente, porfavor espera unos segundos y lo verás en la lista.");
     emit("content-added");
 
     // Limpieza
