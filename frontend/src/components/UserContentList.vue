@@ -2,66 +2,71 @@
   <div class="user-content-list">
     <h2>Mis {{ capitalizedTipo }}</h2>
 
-    <div v-if="filteredContent.length === 0">
-      <p>No tienes contenido añadido de este tipo.</p>
+    <div v-if="loadingContent" class="spinner-container">
+      <span class="spinner carga-todo"></span>
     </div>
+    <div v-else>
+      <div v-if="filteredContent.length === 0">
+        <p>Aún no tienes contenido añadido de este tipo.</p>
+      </div>
 
-    <div class="content-cards" v-else>
-      <div class="content-card" v-for="item in filteredContent" :key="item.id">
-        <img :src="`http://localhost:8080${item.image}` || defaultImage" alt="Portada" class="portada"/>
-        <h3>{{ item.title }}</h3>
-        <p>Género: {{ item.genre }}</p>
+      <div class="content-cards" v-else>
+        <div class="content-card" v-for="item in filteredContent" :key="item.id">
+          <img :src="`http://localhost:8080${item.image}` || defaultImage" alt="Portada" class="portada"/>
+          <h3>{{ item.title }}</h3>
+          <p>Género: {{ item.genre }}</p>
 
-        <div v-if="editingId === item.id">
-          <label>
-            Estado:
-            <select v-model="item.status" class="status-select">
-              <option value="viendo">Viendo</option>
-              <option value="completado">Completado</option>
-              <option value="pendiente">Pendiente</option>
-            </select>
-          </label>
-          <div v-if="item.status === 'completado'">
+          <div v-if="editingId === item.id">
             <label>
-              Valoración:
-              <input
-                type="number"
-                min="0"
-                max="10"
-                v-model.number="item.rating" class="rating-input"
-                placeholder="Valoración (0-10)"
-              />
+              Estado:
+              <select v-model="item.status" class="status-select">
+                <option value="viendo">Viendo</option>
+                <option value="completado">Completado</option>
+                <option value="pendiente">Pendiente</option>
+              </select>
             </label>
-            <span>/10</span>
+            <div v-if="item.status === 'completado'">
+              <label>
+                Valoración:
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  v-model.number="item.rating" class="rating-input"
+                  placeholder="Valoración (0-10)"
+                />
+              </label>
+              <span>/10</span>
+            </div>
+            <div class="edit-actions">
+              <button @click="saveEdit(item)" :disabled="loadingEditId === item.id">Guardar</button>
+              <button @click="cancelEdit" :disabled="loadingEditId === item.id">Cancelar</button>
+            </div>
+            <div v-if="loadingEditId === item.id" class="spinner-container">
+              <span class="spinner"></span>
+            </div>
           </div>
-          <div class="edit-actions">
-            <button @click="saveEdit(item)" :disabled="loadingEditId === item.id">Guardar</button>
-            <button @click="cancelEdit" :disabled="loadingEditId === item.id">Cancelar</button>
-          </div>
-          <div v-if="loadingEditId === item.id" class="spinner-container">
-            <span class="spinner"></span>
-          </div>
-        </div>
-        <div v-else>
-          <p>Estado: {{ item.status }}</p>
-          <p v-if="item.status === 'completado' && item.rating !== null">Valoración: {{ item.rating }}/10</p>
-          <p v-else>Valoración: -/10</p>
-          <p>Añadido el: {{ formatDate(item.addedAt) }}</p>
-          <div class="icon-actions">
-            <img
-              :src="iconoEdit"
-              alt="Editar"
-              class="edit-icon"
-              @click="startEdit(item)"
-              title="Editar"
-            />
-            <img
-              :src="iconoDelete"
-              alt="Eliminar"
-              class="edit-icon"
-              @click="openDeleteModal(item)"
-              title="Eliminar"
-            />
+          <div v-else>
+            <p>Estado: {{ item.status }}</p>
+            <p v-if="item.status === 'completado' && item.rating !== null">Valoración: {{ item.rating }}/10</p>
+            <p v-else>Valoración: -/10</p>
+            <p>Añadido el: {{ formatDate(item.addedAt) }}</p>
+            <div class="icon-actions">
+              <img
+                :src="iconoEdit"
+                alt="Editar"
+                class="edit-icon"
+                @click="startEdit(item)"
+                title="Editar"
+              />
+              <img
+                :src="iconoDelete"
+                alt="Eliminar"
+                class="edit-icon"
+                @click="openDeleteModal(item)"
+                title="Eliminar"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -99,7 +104,8 @@
   const editingId = ref<string | null>(null);
   const loadingDelete = ref(false);
   const loadingEditId = ref<string | null>(null);
-
+  const loadingContent = ref(true);
+  
   const showDeleteModal = ref(false);
   const itemToDelete = ref<any>(null);
 
@@ -120,12 +126,14 @@
   };
 
   const fetchContent = async () => {
+    loadingContent.value = true;
     try {
       const response = await api.get('/api/user-content');
       allContent.value = response.data;
     } catch (error) {
       console.error('Error cargando contenido del usuario:', error);
     }
+    loadingContent.value = false;
   };
 
   const startEdit = (item: any) => {
@@ -328,5 +336,11 @@
   width: 24px !important;
   height: 24px !important;
   border-width: 3px !important;
+}
+
+.spinner.carga-todo {
+  width: 54px !important;
+  height: 54px !important;
+  border-width: 5px !important;
 }
 </style>
