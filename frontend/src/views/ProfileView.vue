@@ -21,8 +21,8 @@
         <div v-else>
           <input v-model="newEmail" type="email" class="input-email"/>
           <br>
-          <button @click="updateEmail">Guardar</button>
-          <button @click="cancelEmailEdit">Cancelar</button>
+          <button @click="updateEmail" class="btn" :disabled="loadingEmail">Guardar</button>
+          <button @click="cancelEmailEdit" class="btn" :disabled="loadingEmail">Cancelar</button>
         </div>
         <span v-if="loadingEmail" class="spinner"></span>
       </div>
@@ -39,8 +39,8 @@
           <br>
           <input v-model="newPassword" type="password" class="input-pass" placeholder="Nueva contraseña"/>
           <br>
-          <button @click="updatePassword">Guardar</button>
-          <button @click="cancelPasswordEdit">Cancelar</button>
+          <button @click="updatePassword" class="btn" :disabled="loadingPassword">Guardar</button>
+          <button @click="cancelPasswordEdit" class="btn" :disabled="loadingPassword">Cancelar</button>
         </div>
         <span v-if="loadingPassword" class="spinner"></span>
       </div>
@@ -49,16 +49,30 @@
 
       <div class="toggle">
         <span>Perfil público</span>
-        <button :class="{'on': userStore?.perfilPublic, 'off': !userStore?.perfilPublic}" @click="toggleProfile">
-          {{ userStore?.perfilPublic ? 'Sí' : 'No' }}
-        </button>
+        <div class="toggle-btn-group">
+          <button
+            :class="{'on': userStore?.perfilPublic, 'off': !userStore?.perfilPublic}"
+            @click="toggleProfile"
+            :disabled="loadingProfile"
+          >
+            {{ userStore?.perfilPublic ? 'Sí' : 'No' }}
+          </button>
+          <span v-if="loadingProfile" class="spinner spinner-inline"></span>
+        </div>
       </div>
 
       <div class="toggle">
         <span>Chat público</span>
-        <button :class="{'on': userStore?.chatPublic, 'off': !userStore?.chatPublic}" @click="toggleChat">
-          {{ userStore?.chatPublic ? 'Sí' : 'No' }}
-        </button>
+        <div class="toggle-btn-group">
+          <button
+            :class="{'on': userStore?.chatPublic, 'off': !userStore?.chatPublic}"
+            @click="toggleChat"
+            :disabled="loadingChat"
+          >
+            {{ userStore?.chatPublic ? 'Sí' : 'No' }}
+          </button>
+          <span v-if="loadingChat" class="spinner spinner-inline"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -78,6 +92,8 @@
   const loadingImage = ref(false);
   const loadingEmail = ref(false);
   const loadingPassword = ref(false);
+  const loadingProfile = ref(false);
+  const loadingChat = ref(false);
 
   const contentCount = ref(0);
 
@@ -156,24 +172,30 @@
   const toggleProfile = async () => {
     if (!userStore.value) return;
     const newValue = !userStore.value.perfilPublic;
+    loadingProfile.value = true;
     try {
       await api.put('/api/profile', { perfilPublic: newValue });
       userStore.value.perfilPublic = newValue;
       toast.success('Visibilidad del perfil actualizada');
     } catch {
       toast.error('Error al actualizar visibilidad del perfil');
+    } finally {
+      loadingProfile.value = false;
     }
   };
 
   const toggleChat = async () => {
     if (!userStore.value) return;
     const newValue = !userStore.value.chatPublic;
+    loadingChat.value = true;
     try {
       await api.put('/api/profile', { chatPublic: newValue });
       userStore.value.chatPublic = newValue;
       toast.success('Configuración del chat actualizada');
     } catch {
       toast.error('Error al actualizar chat');
+    } finally {
+      loadingChat.value = false;
     }
   };
 </script>
@@ -204,6 +226,11 @@
     height: 24px;
     margin-right: 8px;
     vertical-align: middle;
+    transition: 0.2;
+  }
+  
+  .icono:hover{
+    transform: scale(1.2);
   }
 
   .profile-card {
@@ -239,12 +266,23 @@
     font-size: 1rem;
   }
 
+  button[disabled] {
+    background: #888 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+  }
+
   .editar-email {
     margin: 0;
     padding: 0px;
     background: none;
     border: none;
     cursor: pointer;
+  }
+
+  .btn:hover{
+    background-color: #5c5c5c;
   }
 
   .input-pass{
@@ -264,5 +302,16 @@
   button.off {
     background-color: red;
   }
+
+  .toggle-btn-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .spinner-inline {
+    margin-left: 10px;
+    width: 24px !important;
+    height: 24px !important;
+    border-width: 3px !important;
+  }
 </style>
-  
