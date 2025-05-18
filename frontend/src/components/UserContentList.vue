@@ -12,7 +12,11 @@
 
       <div class="content-cards" v-else>
         <div class="content-card" v-for="item in filteredContent" :key="item.id">
-          <img :src="`http://localhost:8080${item.image}` || defaultImage" alt="Portada" class="portada"/>
+          <img
+            :src="item.image ? `http://localhost:8080${item.image}` : imagenPredefinida"
+            alt="Portada"
+            class="portada"
+          />
           <h3>{{ item.title }}</h3>
           <p>Género: {{ item.genre }}</p>
 
@@ -91,7 +95,7 @@
   import { useRoute } from 'vue-router';
   import api from '../axios';
   import { useToast } from 'vue-toastification';
-  import defaultImage from '../assets/Imagen-generica.png';
+  import imagenPredefinida from '../assets/imagen-predefinida.png';
   import iconoEdit from '../assets/icono-edit.svg';
   import iconoDelete from '../assets/icono-delete.svg';
   import '../assets/estilos/spinner.css';
@@ -142,6 +146,8 @@
       status: item.status,
       rating: item.rating,
     };
+    console.log(item.image)
+    console.log(item)
   };
 
   const updateUserContent = async (item: any, newStatus?: string, newRating?: number) => {
