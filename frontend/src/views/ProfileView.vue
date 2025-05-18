@@ -45,7 +45,16 @@
         <span v-if="loadingPassword" class="spinner"></span>
       </div>
 
-      <p><strong>Contenido subido:</strong> {{ contentCount }}</p>
+      <ul class="content-stats">
+        <li><strong>Contenido total:</strong> {{ contentStats.total }}</li>
+        <li><strong>Películas:</strong> {{ contentStats.peliculas }}</li>
+        <li><strong>Series:</strong> {{ contentStats.series }}</li>
+        <li><strong>Libros:</strong> {{ contentStats.libros }}</li>
+        <li><strong>Cómics:</strong> {{ contentStats.comics }}</li>
+        <li><strong>Manga:</strong> {{ contentStats.manga }}</li>
+        <li><strong>Anime:</strong> {{ contentStats.anime }}</li>
+        <li><strong>Videojuegos:</strong> {{ contentStats.videojuegos }}</li>
+      </ul>
 
       <div class="toggle">
         <span>Perfil público</span>
@@ -79,7 +88,7 @@
 </template>
   
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import imagenGenerica from '../assets/Imagen-generica.png'
   import { userStore } from '../stores/authStore';
   import { useToast } from 'vue-toastification';
@@ -103,6 +112,17 @@
   const editingPassword = ref(false);
   const currentPassword = ref('');
   const newPassword = ref('');
+
+  const contentStats = ref({
+    total: 0,
+    peliculas: 0,
+    series: 0,
+    libros: 0,
+    comics: 0,
+    manga: 0,
+    anime: 0,
+    videojuegos: 0,
+  });
 
   const cancelEmailEdit = () => {
     editingEmail.value = false;
@@ -198,6 +218,25 @@
       loadingChat.value = false;
     }
   };
+
+  const fetchContentStats = async () => {
+    try {
+      const res = await api.get('/api/user-content');
+      const items = res.data as { type: string }[];
+      contentStats.value.total = items.length;
+      contentStats.value.peliculas = items.filter(i => i.type === 'peliculas').length;
+      contentStats.value.series = items.filter(i => i.type === 'series').length;
+      contentStats.value.libros = items.filter(i => i.type === 'libros').length;
+      contentStats.value.comics = items.filter(i => i.type === 'comics').length;
+      contentStats.value.manga = items.filter(i => i.type === 'manga').length;
+      contentStats.value.anime = items.filter(i => i.type === 'anime').length;
+      contentStats.value.videojuegos = items.filter(i => i.type === 'videojuegos').length;
+    } catch {
+      toast.error('Error al cargar estadísticas de contenido');
+    }
+  };
+
+  onMounted(fetchContentStats);
 </script>
   
 <style scoped>
@@ -313,5 +352,16 @@
     width: 24px !important;
     height: 24px !important;
     border-width: 3px !important;
+  }
+
+  .content-stats {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .content-stats li {
+    margin: 5px 0;
   }
 </style>
