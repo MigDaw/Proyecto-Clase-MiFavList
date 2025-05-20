@@ -141,4 +141,21 @@ class UserContentController extends AbstractController
 
         return $this->json(['message' => 'Contenido de usuario eliminado.']);
     }
+
+    #[Route('/api/user-content/{userId}', name: 'user_content_by_user', methods: ['GET'])]
+    public function getUserContentByUser(DocumentManager $dm, $userId): JsonResponse
+    {
+        $user = $dm->getRepository(User::class)->find($userId);
+        if (!$user) {
+            return $this->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        $userContent = $dm->getRepository(UserContent::class)->findBy(['user' => $user]);
+        $data = [];
+        foreach ($userContent as $item) {
+            $data[] = [
+                'type' => $item->getContent()->getType(),
+            ];
+        }
+        return $this->json($data);
+    }
 }

@@ -5,13 +5,15 @@ import ContentView from '../views/ContentView.vue';
 //import UsuariosView from '../views/UsuariosView.vue';
 import { userStore } from '../stores/authStore';
 import RegisterView from '../views/RegisterView.vue';
+import UsersView from '../views/UsersView.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginView },
   {path: '/registro', name: 'Register', component: RegisterView},
   { path: '/perfil', name: 'perfil', component: ProfileView, meta: { requiresAuth: true } },
+  { path: '/perfil/:id', name: 'perfil-usuario', component: ProfileView, meta: { requiresAuth: true } },
   { path: '/contenido/:tipo', name: 'contenido', component: ContentView },
-  //{ path: '/usuarios', name: 'usuarios', component: UsuariosView },
+  { path: '/usuarios', name: 'usuarios', component: UsersView },
 ];
 
 const router = createRouter({

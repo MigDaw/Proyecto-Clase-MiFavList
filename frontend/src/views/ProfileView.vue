@@ -1,20 +1,20 @@
 <template>
   <div class="profile">
     <div class="profile-card">
-      <img :src="userStore?.profilePic ? `http://localhost:8080${userStore.profilePic}` 
+      <img :src="profileUser?.profilePic ? `http://localhost:8080${profileUser.profilePic}` 
       : imagenGenerica" alt="Foto de perfil" class="profile-pic" />
       <span v-if="loadingImage" class="spinner"></span>
-      <label for="file">
+      <label v-if="isOwnProfile" for="file">
          <img :src="iconoEdit" alt="Subir imagen" class="icono" />
       </label>
-      <input type="file" id="file" @change="handleImageUpload" style="display: none" />
+      <input v-if="isOwnProfile" type="file" id="file" @change="handleImageUpload" style="display: none" />
 
-      <h2>{{ userStore?.username }}</h2>
+      <h2>{{ profileUser?.username }}</h2>
 
       <div class="email-section">
         <p v-if="!editingEmail">
-          {{ userStore?.email }}
-          <button @click="editingEmail = true" class="editar-email">
+          {{ profileUser?.email }}
+          <button v-if="isOwnProfile" @click="editingEmail = true" class="editar-email">
             <img :src="iconoEdit" alt="Editar email" class="icono" />
           </button>
         </p>
@@ -27,7 +27,7 @@
         <span v-if="loadingEmail" class="spinner"></span>
       </div>
 
-      <div class="password-section">
+      <div class="password-section" v-if="isOwnProfile">
         <p v-if="!editingPassword">
           <button @click="editingPassword = true" class="editar-password">
             Cambiar contraseña
@@ -56,29 +56,29 @@
         <li><strong>Videojuegos:</strong> {{ contentStats.videojuegos }}</li>
       </ul>
 
-      <div class="toggle">
+      <div class="toggle" v-if="isOwnProfile">
         <span>Perfil público</span>
         <div class="toggle-btn-group">
           <button
-            :class="{'on': userStore?.perfilPublic, 'off': !userStore?.perfilPublic}"
+            :class="{'on': profileUser?.perfilPublic, 'off': !profileUser?.perfilPublic}"
             @click="toggleProfile"
             :disabled="loadingProfile"
           >
-            {{ userStore?.perfilPublic ? 'Sí' : 'No' }}
+            {{ profileUser?.perfilPublic ? 'Sí' : 'No' }}
           </button>
           <span v-if="loadingProfile" class="spinner spinner-inline"></span>
         </div>
       </div>
 
-      <div class="toggle">
+      <div class="toggle" v-if="isOwnProfile">
         <span>Chat público</span>
         <div class="toggle-btn-group">
           <button
-            :class="{'on': userStore?.chatPublic, 'off': !userStore?.chatPublic}"
+            :class="{'on': profileUser?.chatPublic, 'off': !profileUser?.chatPublic}"
             @click="toggleChat"
             :disabled="loadingChat"
           >
-            {{ userStore?.chatPublic ? 'Sí' : 'No' }}
+            {{ profileUser?.chatPublic ? 'Sí' : 'No' }}
           </button>
           <span v-if="loadingChat" class="spinner spinner-inline"></span>
         </div>
@@ -88,155 +88,193 @@
 </template>
   
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import imagenGenerica from '../assets/Imagen-generica.png'
-  import { userStore } from '../stores/authStore';
-  import { useToast } from 'vue-toastification';
-  import api from '../axios';
-  import "../assets/estilos/spinner.css";
-  import iconoEdit from "../assets/icono-edit.svg";
+import { ref, onMounted, computed, watch } from 'vue';
+import imagenGenerica from '../assets/Imagen-generica.png'
+import { userStore } from '../stores/authStore';
+import { useToast } from 'vue-toastification';
+import api from '../axios';
+import "../assets/estilos/spinner.css";
+import iconoEdit from "../assets/icono-edit.svg";
+import { useRoute } from 'vue-router';
 
-  const toast = useToast();
+const toast = useToast();
+const route = useRoute();
 
-  const loadingImage = ref(false);
-  const loadingEmail = ref(false);
-  const loadingPassword = ref(false);
-  const loadingProfile = ref(false);
-  const loadingChat = ref(false);
+const loadingImage = ref(false);
+const loadingEmail = ref(false);
+const loadingPassword = ref(false);
+const loadingProfile = ref(false);
+const loadingChat = ref(false);
 
-  const contentCount = ref(0);
+const editingEmail = ref(false);
+const newEmail = ref(userStore.value?.email || '');
 
-  const editingEmail = ref(false);
-  const newEmail = ref(userStore.value?.email || '');
+const editingPassword = ref(false);
+const currentPassword = ref('');
+const newPassword = ref('');
 
-  const editingPassword = ref(false);
-  const currentPassword = ref('');
-  const newPassword = ref('');
+const contentStats = ref({
+  total: 0,
+  peliculas: 0,
+  series: 0,
+  libros: 0,
+  comics: 0,
+  manga: 0,
+  anime: 0,
+  videojuegos: 0,
+});
 
-  const contentStats = ref({
-    total: 0,
-    peliculas: 0,
-    series: 0,
-    libros: 0,
-    comics: 0,
-    manga: 0,
-    anime: 0,
-    videojuegos: 0,
-  });
+const profileUser = ref<any>(null);
+const isOwnProfile = computed(() => !route.params.id || route.params.id === userStore.value?.id);
 
-  const cancelEmailEdit = () => {
-    editingEmail.value = false;
-    newEmail.value = userStore.value?.email || '';
-  };
+const cancelEmailEdit = () => {
+  editingEmail.value = false;
+  newEmail.value = profileUser.value?.email || '';
+};
 
-  const cancelPasswordEdit = () => {
+const cancelPasswordEdit = () => {
   editingPassword.value = false
   currentPassword.value = ''
   newPassword.value = ''
 }
 
-  const handleImageUpload = async (event: Event) => {
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    if (!file) return;
+const handleImageUpload = async (event: Event) => {
+  const file = (event.target as HTMLInputElement)?.files?.[0];
+  if (!file) return;
 
-    const formData = new FormData();
-    formData.append('profilePic', file);
-    loadingImage.value = true;//spiner cargando
+  const formData = new FormData();
+  formData.append('profilePic', file);
+  loadingImage.value = true;
+  try {
+    const res = await api.post('/api/profile/upload-picture', formData);
+    if (userStore.value) {
+      userStore.value.profilePic = res.data.profilePic;
+    }
+    if (profileUser.value) {
+      profileUser.value.profilePic = res.data.profilePic;
+    }
+    toast.success('Imagen actualizada correctamente');
+  } catch {
+    toast.error('Error al subir imagen');
+  } finally {
+    loadingImage.value = false;
+  }
+};
+
+const updateEmail = async () => {
+  loadingEmail.value = true;
+  try {
+    await api.put('/api/profile', { email: newEmail.value });
+    if (userStore.value) userStore.value.email = newEmail.value;
+    if (profileUser.value) profileUser.value.email = newEmail.value;
+    toast.success('Correo actualizado correctamente');
+    editingEmail.value = false;
+  } catch {
+    toast.error('Error al actualizar el correo');
+  } finally {
+    loadingEmail.value = false;
+  }
+};
+
+const updatePassword = async () => {
+  loadingPassword.value = true;
+  try {
+    await api.put('/api/profile/password', {
+      currentPassword: currentPassword.value,
+      newPassword: newPassword.value,
+    });
+    toast.success('Contraseña actualizada correctamente');
+    editingPassword.value = false;
+    currentPassword.value = '';
+    newPassword.value = '';
+  } catch (err:any) {
+    toast.error(
+      err.response?.data?.error || 'Error al actualizar la contraseña'
+    );
+  } finally {
+    loadingPassword.value = false;
+  }
+};
+
+const toggleProfile = async () => {
+  if (!userStore.value) return;
+  const newValue = !userStore.value.perfilPublic;
+  loadingProfile.value = true;
+  try {
+    await api.put('/api/profile', { perfilPublic: newValue });
+    userStore.value.perfilPublic = newValue;
+    if (profileUser.value) profileUser.value.perfilPublic = newValue;
+    toast.success('Visibilidad del perfil actualizada');
+  } catch {
+    toast.error('Error al actualizar visibilidad del perfil');
+  } finally {
+    loadingProfile.value = false;
+  }
+};
+
+const toggleChat = async () => {
+  if (!userStore.value) return;
+  const newValue = !userStore.value.chatPublic;
+  loadingChat.value = true;
+  try {
+    await api.put('/api/profile', { chatPublic: newValue });
+    userStore.value.chatPublic = newValue;
+    if (profileUser.value) profileUser.value.chatPublic = newValue;
+    toast.success('Configuración del chat actualizada');
+  } catch {
+    toast.error('Error al actualizar chat');
+  } finally {
+    loadingChat.value = false;
+  }
+};
+
+const fetchContentStats = async () => {
+  try {
+    let res;
+    if (isOwnProfile.value) {
+      res = await api.get('/api/user-content');
+    } else {
+      res = await api.get(`/api/user-content/${route.params.id}`);
+    }
+    const items = res.data as { type: string }[];
+    contentStats.value.total = items.length;
+    contentStats.value.peliculas = items.filter(i => i.type === 'peliculas').length;
+    contentStats.value.series = items.filter(i => i.type === 'series').length;
+    contentStats.value.libros = items.filter(i => i.type === 'libros').length;
+    contentStats.value.comics = items.filter(i => i.type === 'comics').length;
+    contentStats.value.manga = items.filter(i => i.type === 'manga').length;
+    contentStats.value.anime = items.filter(i => i.type === 'anime').length;
+    contentStats.value.videojuegos = items.filter(i => i.type === 'videojuegos').length;
+  } catch {
+    toast.error('Error al cargar estadísticas de contenido');
+  }
+};
+
+const fetchProfileUser = async () => {
+  if (isOwnProfile.value) {
+    profileUser.value = userStore.value;
+  } else {
     try {
-      const res = await api.post('/api/profile/upload-picture', formData);
-      if (userStore.value) {
-        userStore.value.profilePic = res.data.profilePic;
-        toast.success('Imagen actualizada correctamente');
-      }
+      const res = await api.get(`/api/users/${route.params.id}`);
+      profileUser.value = res.data;
     } catch {
-      toast.error('Error al subir imagen');
-    } finally {
-      loadingImage.value = false;
+      profileUser.value = null;
+      toast.error('No se pudo cargar el perfil');
     }
-  };
+  }
+};
 
-  const updateEmail = async () => {
-    loadingEmail.value = true;
-    try {
-      await api.put('/api/profile', { email: newEmail.value });
-      if (userStore.value) userStore.value.email = newEmail.value;
-      toast.success('Correo actualizado correctamente');
-      editingEmail.value = false;
-    } catch {
-      toast.error('Error al actualizar el correo');
-    }finally {
-      loadingEmail.value = false;
-    }
-  };
+watch(isOwnProfile, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    fetchProfileUser();
+    fetchContentStats();
+  }
+});
 
-  const updatePassword = async () => {
-    loadingPassword.value = true;
-    try {
-      await api.put('/api/profile/password', {
-        currentPassword: currentPassword.value,
-        newPassword: newPassword.value,
-      });
-      toast.success('Contraseña actualizada correctamente');
-      editingPassword.value = false;
-      currentPassword.value = '';
-      newPassword.value = '';
-    } catch (err:any) {
-      toast.error(
-        err.response?.data?.error || 'Error al actualizar la contraseña'
-      );
-    } finally {
-      loadingPassword.value = false;
-    }
-  };
-
-  const toggleProfile = async () => {
-    if (!userStore.value) return;
-    const newValue = !userStore.value.perfilPublic;
-    loadingProfile.value = true;
-    try {
-      await api.put('/api/profile', { perfilPublic: newValue });
-      userStore.value.perfilPublic = newValue;
-      toast.success('Visibilidad del perfil actualizada');
-    } catch {
-      toast.error('Error al actualizar visibilidad del perfil');
-    } finally {
-      loadingProfile.value = false;
-    }
-  };
-
-  const toggleChat = async () => {
-    if (!userStore.value) return;
-    const newValue = !userStore.value.chatPublic;
-    loadingChat.value = true;
-    try {
-      await api.put('/api/profile', { chatPublic: newValue });
-      userStore.value.chatPublic = newValue;
-      toast.success('Configuración del chat actualizada');
-    } catch {
-      toast.error('Error al actualizar chat');
-    } finally {
-      loadingChat.value = false;
-    }
-  };
-
-  const fetchContentStats = async () => {
-    try {
-      const res = await api.get('/api/user-content');
-      const items = res.data as { type: string }[];
-      contentStats.value.total = items.length;
-      contentStats.value.peliculas = items.filter(i => i.type === 'peliculas').length;
-      contentStats.value.series = items.filter(i => i.type === 'series').length;
-      contentStats.value.libros = items.filter(i => i.type === 'libros').length;
-      contentStats.value.comics = items.filter(i => i.type === 'comics').length;
-      contentStats.value.manga = items.filter(i => i.type === 'manga').length;
-      contentStats.value.anime = items.filter(i => i.type === 'anime').length;
-      contentStats.value.videojuegos = items.filter(i => i.type === 'videojuegos').length;
-    } catch {
-      toast.error('Error al cargar estadísticas de contenido');
-    }
-  };
-
-  onMounted(fetchContentStats);
+onMounted(() => {
+  fetchProfileUser();
+  fetchContentStats();
+});
 </script>
   
 <style scoped>
