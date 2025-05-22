@@ -17,9 +17,16 @@
             <option value="contenido">Cantidad de contenido</option>
           </select>
         </label>
+        <label>
+          Orden:
+          <select v-model="sortOrder">
+            <option value="asc">Ascendente</option>
+            <option value="desc">Descendente</option>
+          </select>
+        </label>
         <label class="checkbox-label">
           <input type="checkbox" v-model="onlyPublic" class="inp-checkbox"/>
-          Solo perfiles públicos
+          Sólo perfiles públicos
         </label>
       </div>
     </div>
@@ -39,6 +46,7 @@ import '../assets/estilos/spinner.css';
 const users = ref([]);
 const loading = ref(true);
 const sortBy = ref('nombre');
+const sortOrder = ref('asc');
 const onlyPublic = ref(false);
 const search = ref('');
 
@@ -85,6 +93,9 @@ const sortedAndFilteredUsers = computed(() => {
   } else if (sortBy.value === 'contenido') {
     filtered = [...filtered].sort((a, b) => b.contenidoCount - a.contenidoCount);
   }
+  if (sortOrder.value === 'desc') {
+    filtered.reverse();
+  }
   return filtered;
 });
 </script>
@@ -94,7 +105,7 @@ const sortedAndFilteredUsers = computed(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 900px;
+    max-width: 1000px;
     margin: 2rem auto 1rem auto;
     gap: 1.5rem;
   }
