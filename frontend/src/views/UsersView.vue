@@ -3,6 +3,13 @@
     <div class="header-controls">
       <h1>Usuarios Registrados</h1>
       <div class="controls">
+        <label>Buscar usuario<input
+          v-model="search"
+          type="text"
+          placeholder="Nombre de usuario..."
+          class="user-search"
+        /></label>
+  
         <label>
           Ordenar por:
           <select v-model="sortBy">
@@ -33,6 +40,7 @@ const users = ref([]);
 const loading = ref(true);
 const sortBy = ref('nombre');
 const onlyPublic = ref(false);
+const search = ref('');
 
 onMounted(async () => {
   try {
@@ -61,11 +69,16 @@ onMounted(async () => {
   }
 });
 
-// Computed para ordenar y filtrar
+// Computed para ordenar, filtrar y buscar
 const sortedAndFilteredUsers = computed(() => {
   let filtered = users.value;
   if (onlyPublic.value) {
     filtered = filtered.filter(u => u.isPublic);
+  }
+  if (search.value.trim()) {
+    filtered = filtered.filter(u =>
+      u.username.toLowerCase().includes(search.value.trim().toLowerCase())
+    );
   }
   if (sortBy.value === 'nombre') {
     filtered = [...filtered].sort((a, b) => a.username.localeCompare(b.username));
@@ -81,7 +94,7 @@ const sortedAndFilteredUsers = computed(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 700px;
+    max-width: 900px;
     margin: 2rem auto 1rem auto;
     gap: 1.5rem;
   }
@@ -125,5 +138,14 @@ const sortedAndFilteredUsers = computed(() => {
     justify-content: center;
     align-items: center;
     min-height: 200px;
+  }
+  .user-search {
+    font-family: Lexend;
+    padding: 0.4em 0.7em;
+    border-radius: 1rem;
+    border: none;
+    font-size: 1em;
+    margin: 5px 0;
+    outline: none;
   }
 </style>
