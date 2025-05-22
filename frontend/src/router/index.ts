@@ -9,10 +9,11 @@ import UsersView from '../views/UsersView.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginView },
-  {path: '/registro', name: 'Register', component: RegisterView},
+  { path: '/registro', name: 'Register', component: RegisterView },
   { path: '/perfil', name: 'perfil', component: ProfileView, meta: { requiresAuth: true } },
   { path: '/perfil/:id', name: 'perfil-usuario', component: ProfileView, meta: { requiresAuth: true } },
   { path: '/contenido/:tipo', name: 'contenido', component: ContentView },
+  { path: '/contenido/:tipo/:idUser', name: 'contenido-usuario', component: ContentView },
   { path: '/usuarios', name: 'usuarios', component: UsersView },
 ];
 

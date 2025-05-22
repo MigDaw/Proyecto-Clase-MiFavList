@@ -158,4 +158,31 @@ class UserContentController extends AbstractController
         }
         return $this->json($data);
     }
+    //para consultar el contenido de un usuario en concreto
+    #[Route('/api/user-content/userConcreto/{userId}', name: 'user_content_by_user_detailed', methods: ['GET'])]
+    public function getUserContentByUserDetailed(DocumentManager $dm, $userId): JsonResponse
+    {
+        $user = $dm->getRepository(User::class)->find($userId);
+        if (!$user) {
+            return $this->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        $userContents = $dm->getRepository(UserContent::class)->findBy(['user' => $user]);
+
+        $results = array_map(function (UserContent $uc) {
+            return [
+                'id' => $uc->getId(),
+                'contentId' => $uc->getContent()->getId(),
+                'userId' => $uc->getUser()->getId(),
+                'title' => $uc->getContent()->getTitle(),
+                'image' => $uc->getContent()->getImage(),
+                'genre' => $uc->getContent()->getGenre(),
+                'type' => $uc->getContent()->getType(),
+                'status' => $uc->getStatus(),
+                'rating' => $uc->getRating(),
+                'addedAt' => $uc->getAddedAt()->format('Y-m-d H:i:s'),
+            ];
+        }, $userContents);
+
+        return $this->json($results);
+    }
 }

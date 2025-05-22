@@ -1,86 +1,92 @@
 <template>
-  <div class="profile">
-    <div class="profile-card">
-      <img :src="profileUser?.profilePic ? `http://localhost:8080${profileUser.profilePic}` 
-      : imagenGenerica" alt="Foto de perfil" class="profile-pic" />
-      <span v-if="loadingImage" class="spinner"></span>
-      <label v-if="isOwnProfile" for="file">
-         <img :src="iconoEdit" alt="Subir imagen" class="icono" />
-      </label>
-      <input v-if="isOwnProfile" type="file" id="file" @change="handleImageUpload" style="display: none" />
+  <div :class="['profile-layout', { 'with-navbar': !isOwnProfile }]">
+    <NavbarVertical
+      v-if="!isOwnProfile"
+      :userId="profileUser?.id || route.params.id"
+    />
+    <div class="profile">
+      <div class="profile-card">
+        <img :src="profileUser?.profilePic ? `http://localhost:8080${profileUser.profilePic}` 
+        : imagenGenerica" alt="Foto de perfil" class="profile-pic" />
+        <span v-if="loadingImage" class="spinner"></span>
+        <label v-if="isOwnProfile" for="file">
+           <img :src="iconoEdit" alt="Subir imagen" class="icono" />
+        </label>
+        <input v-if="isOwnProfile" type="file" id="file" @change="handleImageUpload" style="display: none" />
 
-      <h2>{{ profileUser?.username }}</h2>
+        <h2>{{ profileUser?.username }}</h2>
 
-      <div class="email-section">
-        <p v-if="!editingEmail">
-          {{ profileUser?.email }}
-          <button v-if="isOwnProfile" @click="editingEmail = true" class="editar-email">
-            <img :src="iconoEdit" alt="Editar email" class="icono" />
-          </button>
-        </p>
-        <div v-else>
-          <input v-model="newEmail" type="email" class="input-email"/>
-          <br>
-          <button @click="updateEmail" class="btn" :disabled="loadingEmail">Guardar</button>
-          <button @click="cancelEmailEdit" class="btn" :disabled="loadingEmail">Cancelar</button>
+        <div class="email-section">
+          <p v-if="!editingEmail">
+            {{ profileUser?.email }}
+            <button v-if="isOwnProfile" @click="editingEmail = true" class="editar-email">
+              <img :src="iconoEdit" alt="Editar email" class="icono" />
+            </button>
+          </p>
+          <div v-else>
+            <input v-model="newEmail" type="email" class="input-email"/>
+            <br>
+            <button @click="updateEmail" class="btn" :disabled="loadingEmail">Guardar</button>
+            <button @click="cancelEmailEdit" class="btn" :disabled="loadingEmail">Cancelar</button>
+          </div>
+          <span v-if="loadingEmail" class="spinner"></span>
         </div>
-        <span v-if="loadingEmail" class="spinner"></span>
-      </div>
 
-      <div class="password-section" v-if="isOwnProfile">
-        <p v-if="!editingPassword">
-          <button @click="editingPassword = true" class="editar-password">
-            Cambiar contraseña
-            <img :src="iconoEdit" alt="Editar contraseña" class="icono" />
-          </button>
-        </p>
-        <div v-else>
-          <input v-model="currentPassword" type="password" class="input-pass" placeholder="Contraseña actual"/>
-          <br>
-          <input v-model="newPassword" type="password" class="input-pass" placeholder="Nueva contraseña"/>
-          <br>
-          <button @click="updatePassword" class="btn" :disabled="loadingPassword">Guardar</button>
-          <button @click="cancelPasswordEdit" class="btn" :disabled="loadingPassword">Cancelar</button>
+        <div class="password-section" v-if="isOwnProfile">
+          <p v-if="!editingPassword">
+            <button @click="editingPassword = true" class="editar-password">
+              Cambiar contraseña
+              <img :src="iconoEdit" alt="Editar contraseña" class="icono" />
+            </button>
+          </p>
+          <div v-else>
+            <input v-model="currentPassword" type="password" class="input-pass" placeholder="Contraseña actual"/>
+            <br>
+            <input v-model="newPassword" type="password" class="input-pass" placeholder="Nueva contraseña"/>
+            <br>
+            <button @click="updatePassword" class="btn" :disabled="loadingPassword">Guardar</button>
+            <button @click="cancelPasswordEdit" class="btn" :disabled="loadingPassword">Cancelar</button>
+          </div>
+          <span v-if="loadingPassword" class="spinner"></span>
         </div>
-        <span v-if="loadingPassword" class="spinner"></span>
-      </div>
 
-      <ul class="content-stats">
-        <li><strong>Contenido total:</strong> {{ contentStats.total }}</li>
-        <li><strong>Películas:</strong> {{ contentStats.peliculas }}</li>
-        <li><strong>Series:</strong> {{ contentStats.series }}</li>
-        <li><strong>Libros:</strong> {{ contentStats.libros }}</li>
-        <li><strong>Cómics:</strong> {{ contentStats.comics }}</li>
-        <li><strong>Manga:</strong> {{ contentStats.manga }}</li>
-        <li><strong>Anime:</strong> {{ contentStats.anime }}</li>
-        <li><strong>Videojuegos:</strong> {{ contentStats.videojuegos }}</li>
-      </ul>
+        <ul class="content-stats">
+          <li><strong>Contenido total:</strong> {{ contentStats.total }}</li>
+          <li><strong>Películas:</strong> {{ contentStats.peliculas }}</li>
+          <li><strong>Series:</strong> {{ contentStats.series }}</li>
+          <li><strong>Libros:</strong> {{ contentStats.libros }}</li>
+          <li><strong>Cómics:</strong> {{ contentStats.comics }}</li>
+          <li><strong>Manga:</strong> {{ contentStats.manga }}</li>
+          <li><strong>Anime:</strong> {{ contentStats.anime }}</li>
+          <li><strong>Videojuegos:</strong> {{ contentStats.videojuegos }}</li>
+        </ul>
 
-      <div class="toggle" v-if="isOwnProfile">
-        <span>Perfil público</span>
-        <div class="toggle-btn-group">
-          <button
-            :class="{'on': profileUser?.perfilPublic, 'off': !profileUser?.perfilPublic}"
-            @click="toggleProfile"
-            :disabled="loadingProfile"
-          >
-            {{ profileUser?.perfilPublic ? 'Sí' : 'No' }}
-          </button>
-          <span v-if="loadingProfile" class="spinner spinner-inline"></span>
+        <div class="toggle" v-if="isOwnProfile">
+          <span>Perfil público</span>
+          <div class="toggle-btn-group">
+            <button
+              :class="{'on': profileUser?.perfilPublic, 'off': !profileUser?.perfilPublic}"
+              @click="toggleProfile"
+              :disabled="loadingProfile"
+            >
+              {{ profileUser?.perfilPublic ? 'Sí' : 'No' }}
+            </button>
+            <span v-if="loadingProfile" class="spinner spinner-inline"></span>
+          </div>
         </div>
-      </div>
 
-      <div class="toggle" v-if="isOwnProfile">
-        <span>Chat público</span>
-        <div class="toggle-btn-group">
-          <button
-            :class="{'on': profileUser?.chatPublic, 'off': !profileUser?.chatPublic}"
-            @click="toggleChat"
-            :disabled="loadingChat"
-          >
-            {{ profileUser?.chatPublic ? 'Sí' : 'No' }}
-          </button>
-          <span v-if="loadingChat" class="spinner spinner-inline"></span>
+        <div class="toggle" v-if="isOwnProfile">
+          <span>Chat público</span>
+          <div class="toggle-btn-group">
+            <button
+              :class="{'on': profileUser?.chatPublic, 'off': !profileUser?.chatPublic}"
+              @click="toggleChat"
+              :disabled="loadingChat"
+            >
+              {{ profileUser?.chatPublic ? 'Sí' : 'No' }}
+            </button>
+            <span v-if="loadingChat" class="spinner spinner-inline"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -96,6 +102,7 @@ import api from '../axios';
 import "../assets/estilos/spinner.css";
 import iconoEdit from "../assets/icono-edit.svg";
 import { useRoute } from 'vue-router';
+import NavbarVertical from '../components/NavbarVertical.vue';
 
 const toast = useToast();
 const route = useRoute();
@@ -288,6 +295,16 @@ onMounted(() => {
     width: 90%;
     margin: 10px 0;
     font-size: 1rem;
+  }
+
+  .profile-layout {
+    /* Por defecto, bloque normal (no flex) */
+  }
+
+  .profile-layout.with-navbar {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
   }
 
   .profile {

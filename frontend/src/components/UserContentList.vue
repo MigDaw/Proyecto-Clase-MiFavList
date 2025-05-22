@@ -1,9 +1,15 @@
 <template>
-  <h2>Mis {{ capitalizedTipo }}</h2>
+  <h2 v-if="props.titulo">{{ props.titulo }}</h2>
+      <h2 v-else-if="props.editable !== false">Mis {{ capitalizedTipo }}</h2>
   <div class="user-content-list">
     <div class="top-controls">
+      
       <div class="content-controls">
-        <AddUserContent :tipo="tipo" @content-added="fetchContent" />
+        <AddUserContent
+          v-if="props.editable !== false"
+          :tipo="tipo"
+          @content-added="fetchContent"
+        />
         <input
           v-model="search"
           type="text"
@@ -88,7 +94,7 @@
             <p v-if="item.status === 'completado' && item.rating !== null">Valoración: {{ item.rating }}/10</p>
             <p v-else>Valoración: -/10</p>
             <p>Añadido el: {{ formatDate(item.addedAt) }}</p>
-            <div class="icon-actions">
+            <div v-if="props.editable !== false" class="icon-actions">
               <img
                 :src="iconoEdit"
                 alt="Editar"
@@ -138,7 +144,14 @@
   const route = useRoute();
 
   const tipo = computed(() => route.params.tipo as string);
-  const props = defineProps<{ tipo: string; refresh?: number }>();
+  const props = defineProps<{
+    tipo: string;
+    refresh?: number;
+    editable?: boolean;
+    userId?: string;
+    titulo?: string;
+  }>();
+  
   const editingId = ref<string | null>(null);
   const loadingDelete = ref(false);
   const loadingEditId = ref<string | null>(null);
@@ -195,7 +208,11 @@
   const fetchContent = async () => {
     loadingContent.value = true;
     try {
-      const response = await api.get('/api/user-content');
+      let url = '/api/user-content';
+      if (props.userId) {
+        url = `/api/user-content/userConcreto/${props.userId}`;
+      }
+      const response = await api.get(url);
       allContent.value = response.data;
     } catch (error) {
       console.error('Error cargando contenido del usuario:', error);
