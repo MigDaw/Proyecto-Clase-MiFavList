@@ -297,10 +297,6 @@ onMounted(() => {
     font-size: 1rem;
   }
 
-  .profile-layout {
-    /* Por defecto, bloque normal (no flex) */
-  }
-
   .profile-layout.with-navbar {
     display: flex;
     gap: 2rem;
@@ -333,6 +329,7 @@ onMounted(() => {
     border: 2px solid #ccc;
     padding: 30px;
     border-radius: 20px;
+    background: #565256;
   }
 
   img {
@@ -385,16 +382,29 @@ onMounted(() => {
     font-size: 1rem;
   }
 
+  .editar-password{
+    font-family: Lexend;
+  }
   .editar-password:hover{
     background-color: #5c5c5c;
   }
 
   button.on {
-    background-color: green;
+    min-width: 50px;
+    background-color:rgb(29, 145, 74);
+  }
+
+  button.on:hover {
+    background-color: rgb(7, 173, 71);
   }
 
   button.off {
-    background-color: red;
+    min-width: 50px;
+    background-color: rgb(226, 42, 42);
+  }
+
+  button.off:hover {
+    background-color: rgb(254, 53, 53);
   }
 
   .toggle-btn-group {

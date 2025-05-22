@@ -1,11 +1,23 @@
 <template>
   <div>
+    <div v-if="idUser" class="content-header">
+      <h2>
+        {{ capitalizedTipo }} del usuario: {{ nombreUsuario }}
+        
+      </h2>
+      <router-link
+          :to="`/perfil/${idUser}`"
+          class="volver-perfil-btn"
+        >
+          Volver al perfil
+      </router-link>
+    </div>
     <UserContentList
       :tipo="tipo"
       :refresh="refreshKey"
       :editable="!idUser"
       :userId="idUser"
-      :titulo="idUser ? `${capitalizedTipo} del usuario:  ${nombreUsuario}` : undefined"
+      :titulo="!idUser ? `Mis ${capitalizedTipo}` : undefined"
     />
   </div>
 </template>
@@ -44,3 +56,27 @@
     refreshKey.value++;
   };
 </script>
+
+<style scoped>
+  .content-header {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 10px 0;
+  }
+
+  .volver-perfil-btn {
+    background: #484545;
+    color: #fff;
+    padding: 0.4em 1em;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-left: 1em;
+    transition: background 0.2s;
+  }
+  .volver-perfil-btn:hover {
+    background: #6a6767;
+  }
+</style>

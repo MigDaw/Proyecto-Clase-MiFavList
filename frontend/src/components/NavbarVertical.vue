@@ -3,7 +3,7 @@
     <router-link
       v-for="item in items"
       :key="item.tipo"
-      :to="`/contenido/${item.tipo}/${userId}`"
+      :to="`/contenido/${item.tipo}/${props.userId}`"
       class="nav-link"
       active-class="active"
     >
