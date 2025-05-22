@@ -10,7 +10,7 @@
             <option value="contenido">Cantidad de contenido</option>
           </select>
         </label>
-        <label>
+        <label class="checkbox-label">
           <input type="checkbox" v-model="onlyPublic" class="inp-checkbox"/>
           Solo perfiles públicos
         </label>
@@ -88,7 +88,9 @@ const sortedAndFilteredUsers = computed(() => {
   h1 {
     margin: 0;
   }
-
+  .checkbox-label{
+    cursor: pointer;
+  }
   .inp-checkbox{
     width: 1.2em;
     height: 1.2em;
@@ -102,6 +104,7 @@ const sortedAndFilteredUsers = computed(() => {
     padding: 0.4em 0.6em;
     border-radius: 1rem;
     margin: 7px 0; 
+    cursor: pointer;
   }
 
   .controls {
