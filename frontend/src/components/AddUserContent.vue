@@ -11,7 +11,19 @@
           <input v-model="title" type="text" required placeholder="Título" />
 
           <label for="genre">Género:</label>
-          <input v-model="genre" type="text" required placeholder="Género" />
+          <select v-model="genre" required>
+            <option disabled value="">Selecciona un género</option>
+            <option>Acción</option>
+            <option>Aventura</option>
+            <option>Ciencia ficción</option>
+            <option>Comedia</option>
+            <option>Comedia romántica</option>
+            <option>Crimen / Policíaco</option>
+            <option>Drama</option>
+            <option>Terror/Horror</option>
+            <option>Fantasía</option>
+            <option>Romance</option>
+          </select>
 
           <label for="image">Imagen:</label>
           <input type="file" @change="onImageChange" />
@@ -119,120 +131,128 @@ const addContent = async () => {
 </script>
 
 <style scoped>
-.toggle-button-addContent {
-  font-family: Lexend;
-  background: #393a3b;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
+  .toggle-button-addContent {
+    font-family: Lexend;
+    background: #393a3b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
 
-.add-user-content {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+  .add-user-content {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
 
-.modal-content {
-  background: #222;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 24px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-}
+  .modal-content {
+    background: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+  }
 
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-.form-container label {
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: white;;
-}
+  .form-container label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: white;;
+  }
 
-.form-container input[type="text"],
-.form-container input[type="number"],
-.form-container select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  background: #f9f9f9;
-  transition: border 0.2s;
-}
+  .form-container input[type="text"],
+  .form-container input[type="number"],
+  .form-container select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: #f9f9f9;
+    transition: border 0.2s;
+  }
 
-.form-container input[type="text"]:focus,
-.form-container input[type="number"]:focus,
-.form-container select:focus {
-  border-color: #0078d4;
-  outline: none;
-}
+  .form-container input[type="text"]:focus,
+  .form-container input[type="number"]:focus,
+  .form-container select:focus {
+    border-color: #0078d4;
+    outline: none;
+  }
 
-.form-container input[type="file"] {
-  border: none;
-  background: none;
-  padding: 0;
-}
+  .form-container input[type="file"] {
+    border: none;
+    background: none;
+    padding: 0;
+  }
 
-.form-container button[type="submit"],
-.modal-actions button {
-  padding: 10px;
-  background: #0078d4;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
+  .form-container button[type="submit"],
+  .modal-actions button {
+    padding: 10px;
+    background-color: #3b3b3b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
 
-.form-container button[type="submit"]:hover,
-.modal-actions button:hover {
-  background: #005fa3;
-}
+  .form-container button[type="submit"]:hover,
+  .modal-actions button:hover {
+    background-color: #5c5c5c;
+  }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
 
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
+  select{
+    font-family: Lexend;
+  }
 
-.form-container button[disabled],
-.modal-actions button[disabled] {
-  background: #888 !important;
-  color: #ccc !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .form-container button[disabled],
+  .modal-actions button[disabled] {
+    background: #888 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+  }
+
+  input{
+    font-family: Lexend;
+  }
 </style>
