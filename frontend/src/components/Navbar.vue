@@ -1,12 +1,12 @@
 <template>
     <nav v-if="userStore" class="navbar">
-      <router-link to="/contenido/peliculas">Películas</router-link>
-      <router-link to="/contenido/series">Series</router-link>
-      <router-link to="/contenido/libros">Libros</router-link>
-      <router-link to="/contenido/comics">Cómics</router-link>
-      <router-link to="/contenido/manga">Manga</router-link>
-      <router-link to="/contenido/anime">Anime</router-link>
-      <router-link to="/contenido/videojuegos">Videojuegos</router-link>
+      <router-link to="/contenido/peliculas">Mis Películas</router-link>
+      <router-link to="/contenido/series">Mis Series</router-link>
+      <router-link to="/contenido/libros">Mis Libros</router-link>
+      <router-link to="/contenido/comics">Mis Cómics</router-link>
+      <router-link to="/contenido/manga">Mis Mangas</router-link>
+      <router-link to="/contenido/anime">Mis Animes</router-link>
+      <router-link to="/contenido/videojuegos">Mis Videojuegos</router-link>
       <router-link to="/usuarios">Usuarios</router-link>
     </nav>
   </template>
