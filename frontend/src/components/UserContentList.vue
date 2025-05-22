@@ -1,9 +1,15 @@
 <template>
+  <h2>Mis {{ capitalizedTipo }}</h2>
   <div class="user-content-list">
     <div class="top-controls">
-      <h2>Mis {{ capitalizedTipo }}</h2>
       <div class="content-controls">
         <AddUserContent :tipo="tipo" @content-added="fetchContent" />
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Buscar por título..."
+          class="search-input"
+        />
         <label>
           Ordenar por:
           <select v-model="sortBy">
@@ -151,12 +157,17 @@
   const sortBy = ref<'titulo' | 'valoracion'>('titulo');
   const sortOrder = ref<'asc' | 'desc'>('asc');
   const statusFilter = ref<string>('');
+  const search = ref<string>('');
 
   const filteredContent = computed(() => {
     let filtered = allContent.value.filter((item) => item.type === tipo.value);
 
     if (statusFilter.value) {
       filtered = filtered.filter(item => item.status === statusFilter.value);
+    }
+
+    if (search.value) {
+      filtered = filtered.filter(item => item.title.toLowerCase().includes(search.value.toLowerCase()));
     }
 
     if (sortBy.value === 'titulo') {
@@ -293,6 +304,7 @@
     font-size: 0.9rem;
     display: flex;
     flex-direction: column;
+    font-size: 1em;
   }
 
   .content-controls select {
@@ -302,6 +314,20 @@
     border: 1px solid #ccc;
     cursor: pointer;
     margin-top: 4px;
+    font-size: 1em;
+    padding: 0.6em 1em;
+    border-radius: 1rem;
+  }
+
+  .search-input {
+    font-family: Lexend;
+    padding: 0.4em 0.7em;
+    border-radius: 1rem;
+    border: none;
+    font-size: 1em;
+    margin-top: 30px;
+    outline: none;
+    height: 20px;
   }
 
   .content-cards {
@@ -448,5 +474,8 @@
       max-width: 98vw;
       padding: 0.5rem 0.2rem;
     }
+  }
+  h2{
+    text-align: center;
   }
 </style>

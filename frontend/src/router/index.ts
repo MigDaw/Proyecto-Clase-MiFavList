@@ -24,7 +24,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   try {
     const isLoggedIn = userStore.value != null;
-    console.log("el pepe")
     if (to.path === '/' && isLoggedIn) {
       return next('/perfil'); // Redirige si está logueado
     }
