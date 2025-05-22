@@ -19,7 +19,8 @@ class UserController extends AbstractController
             $data[] = [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
-                'isPublic' => $user->isPerfilPublic(), // Usa el getter correcto
+                'isPublic' => $user->isPerfilPublic(),
+                'profilePic' => $user->getProfilePic()
             ];
         }
         return $this->json($data);
