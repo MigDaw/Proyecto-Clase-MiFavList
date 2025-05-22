@@ -1,16 +1,43 @@
 <template>
   <div class="user-content-list">
-    <h2>Mis {{ capitalizedTipo }}</h2>
+    <div class="top-controls">
+      <h2>Mis {{ capitalizedTipo }}</h2>
+      <div class="content-controls">
+        <AddUserContent :tipo="tipo" @content-added="fetchContent" />
+        <label>
+          Ordenar por:
+          <select v-model="sortBy">
+            <option value="titulo">Título</option>
+            <option value="valoracion">Valoración</option>
+          </select>
+        </label>
+        <label>
+          Orden:
+          <select v-model="sortOrder">
+            <option value="asc">Ascendente</option>
+            <option value="desc">Descendente</option>
+          </select>
+        </label>
+        <label>
+          Estado:
+          <select v-model="statusFilter">
+            <option value="">Todos</option>
+            <option value="viendo">Viendo</option>
+            <option value="completado">Completado</option>
+            <option value="pendiente">Pendiente</option>
+          </select>
+        </label>
+      </div>
+    </div>
 
     <div v-if="loadingContent" class="spinner-container">
       <span class="spinner carga-todo"></span>
     </div>
     <div v-else>
       <div v-if="filteredContent.length === 0">
-        <p>Aún no tienes contenido añadido de este tipo.</p>
+        <p>No hay contenido añadido de este tipo.</p>
       </div>
-
-      <div class="content-cards" v-else>
+      <div v-else class="content-cards">
         <div class="content-card" v-for="item in filteredContent" :key="item.id">
           <img
             :src="item.image ? `http://localhost:8080${item.image}` : imagenPredefinida"
@@ -75,19 +102,19 @@
         </div>
       </div>
     </div>
-  </div>
-  <div v-if="showDeleteModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>¿Seguro que deseas eliminar este contenido?</p>
-    <div class="modal-actions">
-      <button @click="confirmDelete" :disabled="loadingDelete">Confirmar</button>
-      <button @click="showDeleteModal = false" :disabled="loadingDelete">Cancelar</button>
+    <div v-if="showDeleteModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>¿Seguro que deseas eliminar este contenido?</p>
+        <div class="modal-actions">
+          <button @click="confirmDelete" :disabled="loadingDelete">Confirmar</button>
+          <button @click="showDeleteModal = false" :disabled="loadingDelete">Cancelar</button>
+        </div>
+        <div v-if="loadingDelete" class="spinner-container">
+          <span class="spinner"></span>
+        </div>
+      </div>
     </div>
-    <div v-if="loadingDelete" class="spinner-container">
-      <span class="spinner"></span>
-    </div>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">
@@ -98,8 +125,9 @@
   import imagenPredefinida from '../assets/imagen-predefinida.png';
   import iconoEdit from '../assets/icono-edit.svg';
   import iconoDelete from '../assets/icono-delete.svg';
+  import AddUserContent from './AddUserContent.vue';
   import '../assets/estilos/spinner.css';
-  
+
   const toast = useToast();
   const route = useRoute();
 
@@ -109,7 +137,7 @@
   const loadingDelete = ref(false);
   const loadingEditId = ref<string | null>(null);
   const loadingContent = ref(true);
-  
+
   const showDeleteModal = ref(false);
   const itemToDelete = ref<any>(null);
 
@@ -120,9 +148,33 @@
   );
 
   const allContent = ref<any[]>([]);
-  const filteredContent = computed(() =>
-    allContent.value.filter((item) => item.type === tipo.value)
-  );
+  const sortBy = ref<'titulo' | 'valoracion'>('titulo');
+  const sortOrder = ref<'asc' | 'desc'>('asc');
+  const statusFilter = ref<string>('');
+
+  const filteredContent = computed(() => {
+    let filtered = allContent.value.filter((item) => item.type === tipo.value);
+
+    if (statusFilter.value) {
+      filtered = filtered.filter(item => item.status === statusFilter.value);
+    }
+
+    if (sortBy.value === 'titulo') {
+      filtered = [...filtered].sort((a, b) =>
+        a.title.localeCompare(b.title)
+      );
+    } else if (sortBy.value === 'valoracion') {
+      filtered = [...filtered].sort((a, b) =>
+        (a.rating ?? 0) - (b.rating ?? 0)
+      );
+    }
+
+    if (sortOrder.value === 'desc') {
+      filtered.reverse();
+    }
+
+    return filtered;
+  });
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -146,8 +198,6 @@
       status: item.status,
       rating: item.rating,
     };
-    console.log(item.image)
-    console.log(item)
   };
 
   const updateUserContent = async (item: any, newStatus?: string, newRating?: number) => {
@@ -213,13 +263,52 @@
 
 <style scoped>
   .user-content-list {
-    padding: 2rem;
+    max-width: 1800px;
+    margin: 2rem auto;
+    padding: 1.5rem 1rem;
+    background: #565256;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  /* Centrado de controles y título */
+  .top-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .content-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .content-controls label {
+    font-family: Lexend;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content-controls select {
+    font-family: Lexend;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-top: 4px;
   }
 
   .content-cards {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    justify-content: center;
   }
 
   .content-card {
@@ -262,15 +351,15 @@
     border-radius: 4px;
     border: none;
     cursor: pointer;
-}
+  }
 
-.edit-actions button[disabled],
-.edit-actions button:disabled {
-  background: #888 !important;
-  color: #ccc !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
+  .edit-actions button[disabled],
+  .edit-actions button:disabled {
+    background: #888 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+  }
 
   .modal-overlay {
     position: fixed;
@@ -307,12 +396,12 @@
   }
 
   .modal-actions button[disabled] {
-  margin-top:10px;
-  background: #888 !important;
-  color: #ccc !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
+    margin-top:10px;
+    background: #888 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+  }
 
   .icon-actions {
     display: flex;
@@ -332,21 +421,32 @@
   }
 
   .spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 24px; /* Aumenta el margen superior */
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 24px;
+  }
 
-.spinner {
-  width: 24px !important;
-  height: 24px !important;
-  border-width: 3px !important;
-}
+  .spinner {
+    width: 24px !important;
+    height: 24px !important;
+    border-width: 3px !important;
+  }
 
-.spinner.carga-todo {
-  width: 54px !important;
-  height: 54px !important;
-  border-width: 5px !important;
-}
+  .spinner.carga-todo {
+    width: 54px !important;
+    height: 54px !important;
+    border-width: 5px !important;
+  }
+
+  .content-controls > *:first-child {
+    margin-top: 0.8rem;
+    margin-right: 1.5rem;
+  }
+  @media (max-width: 700px) {
+    .user-content-list {
+      max-width: 98vw;
+      padding: 0.5rem 0.2rem;
+    }
+  }
 </style>

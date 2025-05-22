@@ -1,7 +1,7 @@
 <template>
   <div class="add-user-content">
     <button @click="showForm = true" class="toggle-button-addContent">
-      Añadir contenido
+      + Añadir contenido
     </button>
 
     <div v-if="showForm" class="modal-overlay">
