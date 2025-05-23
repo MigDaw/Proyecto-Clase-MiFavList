@@ -355,7 +355,7 @@
   }
 
   .content-card {
-    background: #413d3d;
+    background: #393a3b;
     border-radius: 6px;
     padding: 1rem;
     width: 200px;
@@ -388,12 +388,18 @@
 
   .edit-actions button{
     font-family: Lexend;
-    padding: 4px;
+    padding: 5px;
     margin: 10px;
     font-size: 0.9rem;
     border-radius: 4px;
     border: none;
     cursor: pointer;
+    background-color: rgb(97, 111, 104);
+    color: white;
+  }
+
+  .edit-actions button:hover{
+    background-color: rgb(67, 78, 73);
   }
 
   .edit-actions button[disabled],
@@ -436,6 +442,12 @@
     cursor: pointer;
     font-family: Lexend;
     font-size: 1rem;
+    background-color: rgb(97, 111, 104);
+    color: white;
+  }
+
+  .modal-actions button:hover {
+    background-color: rgb(67, 78, 73);
   }
 
   .modal-actions button[disabled] {

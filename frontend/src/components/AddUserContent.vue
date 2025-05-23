@@ -140,7 +140,10 @@ const addContent = async () => {
     padding: 10px 20px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.2s;
+  }
+
+  .toggle-button-addContent:hover {
+    background: #5c5c5c;
   }
 
   .add-user-content {
