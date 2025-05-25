@@ -89,4 +89,32 @@ class CommentController extends AbstractController
             'commentDate' => $comment->getCommentDate()->format(\DateTime::ATOM),
         ], 201);
     }
+
+    #[Route('/api/comments/{id}', name: 'delete_comment', methods: ['DELETE'])]
+    public function deleteComment(DocumentManager $dm, string $id): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'No autenticado'], 401);
+        }
+
+        $comment = $dm->getRepository(Comment::class)->find($id);
+        if (!$comment) {
+            return $this->json(['error' => 'Comentario no encontrado'], 404);
+        }
+
+        // Solo puede borrar: el autor del comentario o el dueño del perfil
+        if (
+            $comment->getAuthor()->getId() !== $user->getId() &&
+            $comment->getUserProfile()->getId() !== $user->getId()
+        ) {
+            return $this->json(['error' => 'No tienes permiso para borrar este comentario'], 403);
+        }
+
+        $dm->remove($comment);
+        $dm->flush();
+
+        return $this->json(['message' => 'Comentario borrado']);
+    }
 }
