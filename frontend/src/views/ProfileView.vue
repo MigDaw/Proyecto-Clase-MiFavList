@@ -1,10 +1,12 @@
 <template>
-  <div :class="['profile-layout', { 'with-navbar': !isOwnProfile }]">
-    <NavbarVertical
-      v-if="!isOwnProfile"
-      :userId="profileUser?.id || route.params.id"
-    />
-    <div class="profile">
+  <div class="profile-layout">
+    <div class="profile-nav">
+      <NavbarVertical
+        v-if="!isOwnProfile"
+        :userId="profileUser?.id || route.params.id"
+      />
+    </div>
+    <div class="profile-center">
       <div class="profile-card">
         <img :src="profileUser?.profilePic ? `http://localhost:8080${profileUser.profilePic}` 
         : imagenGenerica" alt="Foto de perfil" class="profile-pic" />
@@ -89,7 +91,8 @@
           </div>
         </div>
       </div>
-      <!-- BLOQUE DE COMENTARIOS SIEMPRE VISIBLE -->
+    </div>
+    <div class="profile-comments-col">
       <div class="profile-comments">
         <h3>Comentarios</h3>
         <div v-if="loadingComments" class="spinner"></div>
@@ -430,16 +433,71 @@ onMounted(() => {
     font-size: 1rem;
   }
 
-  .profile-layout.with-navbar {
+  .profile-layout {
     display: flex;
-    gap: 2rem;
+    flex-direction: row;
+    align-items: flex-start; /* Cambia a flex-start para que no se estiren verticalmente */
+    justify-content: center;
+    min-height: 100vh;
+    gap: 3.5rem; /* Más separación entre columnas */
+    background: #232323;
+    padding: 40px 0;
+  }
+
+  .profile-nav {
+    flex: 0 0 220px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    min-height: 600px;
+  }
+
+  .profile-center {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
     align-items: flex-start;
   }
 
-  .profile {
+  .profile-card {
+    width: 350px; /* tamaño clásico */
+    max-width: 95vw;
+    text-align: center;
+    border: 2px solid #ccc;
+    padding: 30px 24px;
+    border-radius: 20px;
+    background: #565256;
+    margin: 0;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.13);
+  }
+
+  .profile-pic {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 18px;
+    border: 3px solid #393a3b;
+  }
+
+  .profile-comments-col {
+    flex: 0 0 auto;
     display: flex;
-    justify-content: center;
-    padding: 40px;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .profile-comments {
+    margin-top: 0;
+    max-width: 420px;
+    width: 100%;
+    background: #565256;
+    border-radius: 16px;
+    padding: 32px 24px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.13);
+    min-width: 320px;
+    max-height: 480px; /* Ajusta según el alto de un comentario x5 */
+    overflow-y: auto;
   }
 
   .icono{
@@ -454,21 +512,6 @@ onMounted(() => {
   
   .icono:hover{
     transform: scale(1.2);
-  }
-
-  .profile-card {
-    width: 400px;
-    text-align: center;
-    border: 2px solid #ccc;
-    padding: 30px;
-    border-radius: 20px;
-    background: #565256;
-  }
-
-  img {
-    width: 150px;
-    border-radius: 50%;
-    margin-bottom: 20px;
   }
 
   .toggle {
@@ -563,111 +606,130 @@ onMounted(() => {
     margin: 5px 0;
   }
 
-  /* Añade estilos para comentarios y modal si quieres personalizar más */
-.profile-comments {
-  margin-top: 40px;
-  max-width: 500px;
-  width: 100%;
-}
-.comment {
-  background: #393a3b;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  padding: 12px 16px;
-}
-.comment-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-.comment-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-.comment-username {
-  font-weight: bold;
-}
-.comment-date {
-  font-size: 0.85em;
-  color: #bbb;
-  margin-left: auto;
-}
-.btn-delete {
-  background: none;
-  border: none;
-  color: #e44;
-  font-size: 1.2em;
-  cursor: pointer;
-  margin-left: 10px;
-}
-.comment-message {
-  margin-left: 42px;
-  word-break: break-word;
-}
-.add-comment-btn {
-  text-align: center;
-  margin-top: 18px;
-}
-.no-comments {
-  color: #ccc;
-  text-align: center;
-  margin: 20px 0;
-}
+  
+  .comment {
+    background: #393a3b;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    min-height: 60px;
+    /* Puedes ajustar min-height si tus comentarios son más altos/bajos */
+  }
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+  .comment-username {
+    font-weight: bold;
+  }
+  .comment-date {
+    font-size: 0.85em;
+    color: #bbb;
+    margin-left: auto;
+  }
+  .btn-delete {
+    background: none;
+    border: none;
+    color: #e44;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .comment-message {
+    margin-left: 42px;
+    word-break: break-word;
+  }
+  .add-comment-btn {
+    text-align: center;
+    margin-top: 18px;
+  }
+  .no-comments {
+    color: #ccc;
+    text-align: center;
+    margin: 20px 0;
+  }
 
-/* Modal igual que UserContentList */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px) brightness(0.8);
-}
-.modal-content {
-  background: #222;
-  padding: 2rem 2.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.25);
-  text-align: center;
-  min-width: 300px;
-}
-.modal-actions {
-  margin-top: 1.5rem;
-}
-.modal-actions button {
-  margin: 0 10px;
-  padding: 8px 20px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-family: Lexend;
-  font-size: 1rem;
-  background-color: rgb(97, 111, 104);
-  color: white;
-}
-.modal-actions button:hover {
-  background-color: rgb(67, 78, 73);
-}
-.modal-actions button[disabled] {
-  margin-top:10px;
-  background: #888 !important;
-  color: #ccc !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 24px;
-}
-.spinner {
-  width: 24px !important;
-  height: 24px !important;
-  border-width: 3px !important;
-}
+  /* Modal igual que UserContentList */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px) brightness(0.8);
+  }
+  .modal-content {
+    background: #222;
+    padding: 2rem 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+    text-align: center;
+    min-width: 300px;
+  }
+  .modal-actions {
+    margin-top: 1.5rem;
+  }
+  .modal-actions button {
+    margin: 0 10px;
+    padding: 8px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-family: Lexend;
+    font-size: 1rem;
+    background-color: rgb(97, 111, 104);
+    color: white;
+  }
+  .modal-actions button:hover {
+    background-color: rgb(67, 78, 73);
+  }
+  .modal-actions button[disabled] {
+    margin-top:10px;
+    background: #888 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+  }
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 24px;
+  }
+  .spinner {
+    width: 24px !important;
+    height: 24px !important;
+    border-width: 3px !important;
+  }
+
+  @media (max-width: 1200px) {
+    .profile-layout {
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: stretch;
+      padding: 20px 0;
+    }
+    .profile-nav,
+    .profile-center,
+    .profile-comments-col {
+      min-height: unset;
+      justify-content: center;
+      align-items: center;
+    }
+    .profile-card,
+    .profile-comments {
+      margin: 0 auto;
+      width: 95vw;
+      max-width: 500px;
+    }
+  }
 </style>
