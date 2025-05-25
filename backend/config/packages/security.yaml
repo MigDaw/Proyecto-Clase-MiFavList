@@ -6,6 +6,7 @@ security:
         app_user_provider:
             mongodb:
                 class: App\Document\User
+                property: username
 
     firewalls:
         dev:
@@ -15,6 +16,9 @@ security:
         main:
             provider: app_user_provider
             lazy: true
-            stateless: true
+            json_login:
+                check_path: /api/login
+                username_path: username
+                password_path: password
 
     access_control: []
