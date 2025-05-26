@@ -28,8 +28,17 @@ const registerData = ref({ username: '', email: '', password: '' });
 const registerError = ref('');
 const registerLoading = ref(false);
 
+function validarEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 const handleRegister = async () => {
   registerError.value = '';
+  if (!validarEmail(registerData.value.email)) {
+    registerError.value = 'Introduce un correo electrónico válido.';
+    toast.info('Introduce un correo electrónico válido.');
+    return;
+  }
   registerLoading.value = true;
   try {
     await api.post('/api/register', registerData.value);

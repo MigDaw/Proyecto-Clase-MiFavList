@@ -1,27 +1,48 @@
 <template>
-  <HeaderComp></HeaderComp>
-  <Navbar></Navbar>
-  <RouterView></RouterView>
-  <FooterComp></FooterComp>
+  <div class="app-layout">
+    <HeaderComp />
+    <Navbar />
+    <div class="main-content">
+      <RouterView />
+    </div>
+    <FooterComp />
+  </div>
 </template>
 
-
 <script setup lang="ts">
-  import { RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
 import FooterComp from './components/FooterComp.vue';
-import HeaderComp from './components/HeaderComp.vue'
+import HeaderComp from './components/HeaderComp.vue';
 import Navbar from './components/Navbar.vue';
-
-  //A PARTIR DE AQUÍ ES LA PRUEBA DEL BACKEND
-  /* 
-  import { onMounted } from 'vue'
-  onMounted(async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/test')
-      const data = await response.json()
-      console.log('✅ Respuesta del backend:', data)
-    } catch (error) {
-      console.error('❌ Error al conectarse al backend:', error)
-    }
-  }) */
 </script>
+
+<style scoped>
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header,
+HeaderComp {
+  flex-shrink: 0;
+  /* Puedes poner height: 60px; si quieres un alto fijo */
+}
+
+nav,
+Navbar {
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  /* Hace que ocupe el espacio restante */
+  display: flex;
+  flex-direction: column;
+}
+
+footer,
+FooterComp {
+  flex-shrink: 0;
+}
+</style>
