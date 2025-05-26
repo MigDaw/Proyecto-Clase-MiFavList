@@ -6,6 +6,7 @@ import ContentView from '../views/ContentView.vue';
 import { userStore } from '../stores/authStore';
 import RegisterView from '../views/RegisterView.vue';
 import UsersView from '../views/UsersView.vue';
+import ContactView from '../views/Contact.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginView },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/contenido/:tipo', name: 'contenido', component: ContentView },
   { path: '/contenido/:tipo/:idUser', name: 'contenido-usuario', component: ContentView },
   { path: '/usuarios', name: 'usuarios', component: UsersView },
+  { path: '/contacto', name: 'contacto', component: ContactView },
 ];
 
 const router = createRouter({
