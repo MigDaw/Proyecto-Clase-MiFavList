@@ -75,6 +75,9 @@
     text-decoration: none;
     margin-left: 1em;
     transition: background 0.2s;
+    box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   }
   .volver-perfil-btn:hover {
     background: #6a6767;

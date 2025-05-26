@@ -39,7 +39,9 @@ function goToProfile(userId) {
   padding: 1.5rem 1rem;
   background: #565256;
   border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+  -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+  -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
 }
 
 .users-list {
@@ -52,7 +54,7 @@ function goToProfile(userId) {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 110px 90px 100px;
   align-items: center;
-  gap: 0.7rem;
+  gap: 1rem;
   margin-bottom: 0.7rem;
   padding: 0.5rem 0.7rem;
   border-radius: 8px;

@@ -140,6 +140,9 @@ const addContent = async () => {
     padding: 10px 20px;
     font-size: 1rem;
     cursor: pointer;
+    box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   }
 
   .toggle-button-addContent:hover {

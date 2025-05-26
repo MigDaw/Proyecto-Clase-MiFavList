@@ -92,69 +92,11 @@
         </div>
       </div>
     </div>
-    <div class="profile-comments-col">
-      <div class="profile-comments">
-        <h3>Comentarios</h3>
-        <div v-if="loadingComments" class="spinner"></div>
-        <div v-else>
-          <div v-if="comments.length === 0" class="no-comments">
-            No hay comentarios todavía.
-          </div>
-          <div v-for="comment in comments" :key="comment.id" class="comment">
-            <div class="comment-header">
-              <img
-                :src="comment.author.profilePic ? `http://localhost:8080${comment.author.profilePic}` : imagenGenerica"
-                class="comment-avatar"
-                alt="avatar"
-              />
-              <span class="comment-username">{{ comment.author.username }}</span>
-              <span class="comment-date">{{ formatDate(comment.commentDate) }}</span>
-              <button
-                v-if="canDeleteComment(comment)"
-                @click="deleteComment(comment.id)"
-                class="btn-delete"
-                title="Borrar comentario"
-              >🗑️</button>
-            </div>
-            <div class="comment-message">{{ comment.message }}</div>
-          </div>
-          <!-- BOTÓN AÑADIR SOLO SI NO ES TU PERFIL Y chatPublic -->
-          <div v-if="!isOwnProfile && profileUser?.chatPublic" class="add-comment-btn">
-            <button @click="showCommentModal = true" class="btn">
-              Añadir comentario
-            </button>
-          </div>
-        </div>
-        <!-- MODAL PARA AÑADIR COMENTARIO -->
-        <div v-if="showCommentModal" class="modal-overlay">
-          <div class="modal-content">
-            <p>Nuevo comentario</p>
-            <input
-              v-model="newComment"
-              :disabled="postingComment"
-              type="text"
-              placeholder="Escribe un comentario..."
-              @keyup.enter="postComment"
-              autofocus
-            />
-            <div class="modal-actions">
-              <button
-                @click="postComment"
-                :disabled="postingComment || !newComment.trim()"
-              >
-                Enviar
-              </button>
-              <button @click="closeCommentModal" :disabled="postingComment">
-                Cancelar
-              </button>
-            </div>
-            <div v-if="postingComment" class="spinner-container">
-              <span class="spinner"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ProfileComments
+      :profileUser="profileUser"
+      :isOwnProfile="isOwnProfile"
+      :userStore="userStore"
+    />
   </div>
 </template>
   
@@ -168,6 +110,7 @@ import "../assets/estilos/spinner.css";
 import iconoEdit from "../assets/icono-edit.svg";
 import { useRoute } from 'vue-router';
 import NavbarVertical from '../components/NavbarVertical.vue';
+import ProfileComments from '../components/ProfileComments.vue';
 
 const toast = useToast();
 const route = useRoute();
@@ -177,8 +120,6 @@ const loadingEmail = ref(false);
 const loadingPassword = ref(false);
 const loadingProfile = ref(false);
 const loadingChat = ref(false);
-const loadingComments = ref(false);
-const postingComment = ref(false);
 
 const editingEmail = ref(false);
 const newEmail = ref(userStore.value?.email || '');
@@ -186,9 +127,6 @@ const newEmail = ref(userStore.value?.email || '');
 const editingPassword = ref(false);
 const currentPassword = ref('');
 const newPassword = ref('');
-
-const newComment = ref('');
-const showCommentModal = ref(false);
 
 const contentStats = ref({
   total: 0,
@@ -202,7 +140,6 @@ const contentStats = ref({
 });
 
 const profileUser = ref<any>(null);
-const comments = ref<any[]>([]);
 const isOwnProfile = computed(() => !route.params.id || route.params.id === userStore.value?.id);
 
 const cancelEmailEdit = () => {
@@ -328,70 +265,6 @@ const fetchContentStats = async () => {
   }
 };
 
-const fetchComments = async () => {
-  if (!profileUser.value || !profileUser.value.id) {
-    comments.value = [];
-    return;
-  }
-  loadingComments.value = true;
-  try {
-    const res = await api.get(`/api/profiles/${profileUser.value.id}/comments`);
-    comments.value = res.data;
-  } catch {
-    comments.value = [];
-    // No mostrar toast aquí para no molestar si no hay comentarios
-  } finally {
-    loadingComments.value = false;
-  }
-};
-
-const postComment = async () => {
-  if (!newComment.value.trim()) return;
-  postingComment.value = true;
-  try {
-    await api.post(`/api/profiles/${profileUser.value.id}/comments`, {
-      message: newComment.value.trim(),
-    });
-    newComment.value = '';
-    await fetchComments();
-    toast.success('Comentario publicado');
-    showCommentModal.value = false;
-  } catch (err: any) {
-    toast.error(err.response?.data?.error || 'No se pudo enviar el comentario');
-  } finally {
-    postingComment.value = false;
-  }
-};
-
-const closeCommentModal = () => {
-  showCommentModal.value = false;
-  newComment.value = '';
-};
-
-const deleteComment = async (commentId: string) => {
-  if (!confirm('¿Seguro que quieres borrar este comentario?')) return;
-  try {
-    await api.delete(`/api/comments/${commentId}`);
-    await fetchComments();
-    toast.success('Comentario borrado');
-  } catch (err: any) {
-    toast.error(err.response?.data?.error || 'No se pudo borrar el comentario');
-  }
-};
-
-// Puedes borrar si:
-// - Es tu perfil (cualquier comentario)
-// - Es otro perfil, pero el comentario es tuyo
-const canDeleteComment = (comment: any) => {
-  if (isOwnProfile.value) return true;
-  return comment.author.id === userStore.value?.id;
-};
-
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleString();
-};
-
 const fetchProfileUser = async () => {
   if (isOwnProfile.value) {
     profileUser.value = userStore.value;
@@ -404,7 +277,6 @@ const fetchProfileUser = async () => {
       toast.error('No se pudo cargar el perfil');
     }
   }
-  await fetchComments();
 };
 
 watch(isOwnProfile, (newVal, oldVal) => {
@@ -468,7 +340,9 @@ onMounted(() => {
     border-radius: 20px;
     background: #565256;
     margin: 0;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.13);
+    box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   }
 
   .profile-pic {
@@ -478,26 +352,6 @@ onMounted(() => {
     border-radius: 50%;
     margin-bottom: 18px;
     border: 3px solid #393a3b;
-  }
-
-  .profile-comments-col {
-    flex: 0 0 auto;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .profile-comments {
-    margin-top: 0;
-    max-width: 420px;
-    width: 100%;
-    background: #565256;
-    border-radius: 16px;
-    padding: 32px 24px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.13);
-    min-width: 320px;
-    max-height: 480px; /* Ajusta según el alto de un comentario x5 */
-    overflow-y: auto;
   }
 
   .icono{
@@ -546,10 +400,6 @@ onMounted(() => {
     background: none;
     border: none;
     cursor: pointer;
-  }
-
-  .btn:hover{
-    background-color: #5c5c5c;
   }
 
   .input-pass{
@@ -606,99 +456,8 @@ onMounted(() => {
     margin: 5px 0;
   }
 
-  
-  .comment {
-    background: #393a3b;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    padding: 12px 16px;
-    min-height: 60px;
-    /* Puedes ajustar min-height si tus comentarios son más altos/bajos */
-  }
-  .comment-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-  .comment-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-  }
-  .comment-username {
-    font-weight: bold;
-  }
-  .comment-date {
-    font-size: 0.85em;
-    color: #bbb;
-    margin-left: auto;
-  }
-  .btn-delete {
-    background: none;
-    border: none;
-    color: #e44;
-    font-size: 1.2em;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  .comment-message {
-    margin-left: 42px;
-    word-break: break-word;
-  }
-  .add-comment-btn {
-    text-align: center;
-    margin-top: 18px;
-  }
-  .no-comments {
-    color: #ccc;
-    text-align: center;
-    margin: 20px 0;
-  }
-
   /* Modal igual que UserContentList */
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    backdrop-filter: blur(4px) brightness(0.8);
-  }
-  .modal-content {
-    background: #222;
-    padding: 2rem 2.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 32px rgba(0,0,0,0.25);
-    text-align: center;
-    min-width: 300px;
-  }
-  .modal-actions {
-    margin-top: 1.5rem;
-  }
-  .modal-actions button {
-    margin: 0 10px;
-    padding: 8px 20px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-family: Lexend;
-    font-size: 1rem;
-    background-color: rgb(97, 111, 104);
-    color: white;
-  }
-  .modal-actions button:hover {
-    background-color: rgb(67, 78, 73);
-  }
-  .modal-actions button[disabled] {
-    margin-top:10px;
-    background: #888 !important;
-    color: #ccc !important;
-    cursor: not-allowed !important;
-    opacity: 0.7;
-  }
+  
   .spinner-container {
     display: flex;
     justify-content: center;

@@ -296,7 +296,9 @@
     padding: 1.5rem 1rem;
     background: #565256;
     border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   }
 
   /* Centrado de controles y título */
@@ -361,6 +363,9 @@
     width: 200px;
     height: 390px;
     text-align: center;
+    box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   }
 
   .content-card .portada {
