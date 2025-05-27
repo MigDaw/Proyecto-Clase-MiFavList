@@ -158,6 +158,7 @@ img {
 .dropdown a,
 .dropdown router-link {
   padding: 10px;
+  border-radius: 10px;
   text-align: left;
   color: rgb(61, 58, 58);
   text-decoration: none;
