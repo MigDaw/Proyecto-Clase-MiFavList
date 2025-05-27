@@ -1,6 +1,6 @@
 <template>
   <header>
-    <img src="../assets/Logo 1.png" alt="logo" />
+    <a href="/"><img src="../assets/Logo 1.png" alt="logo" /></a>
 
     <div class="socials">
       <a href="/contacto"

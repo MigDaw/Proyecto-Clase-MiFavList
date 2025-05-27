@@ -70,6 +70,15 @@ class ProfileController extends AbstractController
             return $this->json(['error' => 'No se ha enviado ninguna imagen.'], 400);
         }
 
+        // Elimina la foto anterior si existe y está en uploads (no la genérica del frontend)
+        $oldPic = $user->getProfilePic();
+        if ($oldPic && strpos($oldPic, '/uploads/') === 0 && strpos($oldPic, 'Imagen-generica.png') === false) {
+            $oldPicPath = $this->getParameter('kernel.project_dir') . '/public' . $oldPic;
+            if (file_exists($oldPicPath)) {
+                @unlink($oldPicPath);
+            }
+        }
+
         $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/uploads/';
         $filename = uniqid() . '.' . $file->guessExtension();
         $file->move($uploadsDir, $filename);

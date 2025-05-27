@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      Miguel &copy; {{ new Date().getFullYear() }} - Todos los derechos reservados
+      Miguel Rico Pérez &copy; {{ new Date().getFullYear() }} - Todos los derechos reservados
     </div>
   </footer>
 </template>

@@ -136,6 +136,18 @@ class UserContentController extends AbstractController
             return $this->json(['error' => 'No autorizado.'], 403);
         }
 
+        // Elimina la imagen asociada si existe y no es la genérica
+        $content = $userContent->getContent();
+        $imagePath = $content->getImage();
+        $esImagenPredefinida = strpos($imagePath, 'Imagen-predefinida.png') !== false;
+
+        if ($imagePath && !$esImagenPredefinida) {
+            $fullPath = $this->getParameter('kernel.project_dir') . '/public/' . $imagePath;
+            if (file_exists($fullPath)) {
+                @unlink($fullPath);
+            }
+        }
+
         $dm->remove($userContent);
         $dm->flush();
 
