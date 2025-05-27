@@ -3,7 +3,7 @@
     <img src="../assets/Logo 1.png" alt="logo" />
 
     <div class="socials">
-      <a href="/contacto" target="_blank"
+      <a href="/contacto"
         ><img :src="logoGmail" alt="Icono gmail" title="Contacto por correo electrónico"
       /></a>
       <a href="https://github.com/MigDaw" target="_blank"
