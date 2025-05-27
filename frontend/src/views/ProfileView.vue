@@ -369,7 +369,6 @@ input {
   flex-direction: row;
   align-items: flex-start; /* Cambia a flex-start para que no se estiren verticalmente */
   justify-content: center;
-  min-height: 100vh;
   gap: 3.5rem; /* Más separación entre columnas */
   background: #232323;
   padding: 40px 0;

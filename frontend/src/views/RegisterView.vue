@@ -32,8 +32,18 @@ function validarEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// Solo letras, números, sin espacios, 1-20 caracteres
+function validarUsername(username: string) {
+  return /^[A-Za-z0-9]{1,20}$/.test(username);
+}
+
 const handleRegister = async () => {
   registerError.value = '';
+  if (!validarUsername(registerData.value.username)) {
+    registerError.value = 'El nombre de usuario solo puede contener letras y números, sin espacios, y máximo 20 caracteres.';
+    toast.info('El nombre de usuario solo puede contener letras y números, sin espacios, y máximo 20 caracteres.');
+    return;
+  }
   if (!validarEmail(registerData.value.email)) {
     registerError.value = 'Introduce un correo electrónico válido.';
     toast.info('Introduce un correo electrónico válido.');

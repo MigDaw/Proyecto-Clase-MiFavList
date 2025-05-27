@@ -361,7 +361,7 @@
     border-radius: 6px;
     padding: 1rem;
     width: 200px;
-    height: 390px;
+    min-height: 390px;
     text-align: center;
     box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
     -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
@@ -484,7 +484,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 24px;
+    margin-top: 10px;
   }
 
   .spinner {

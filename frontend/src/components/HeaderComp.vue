@@ -1,6 +1,6 @@
 <template>
   <header>
-    <a href="/"><img src="../assets/Logo 1.png" alt="logo" /></a>
+    <a href="/"><img src="../assets/Logo 1.png" alt="logo" class="logo-web" /></a>
 
     <div class="socials">
       <a href="/contacto"
@@ -134,6 +134,14 @@ img {
   box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
   -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+}
+
+.logo-web{
+  transition: 0.2s;
+}
+
+.logo-web:hover {
+  transform: scale(1.05);
 }
 
 .chevron {

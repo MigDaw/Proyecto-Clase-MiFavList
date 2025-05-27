@@ -17,6 +17,13 @@ import Navbar from './components/Navbar.vue';
 </script>
 
 <style scoped>
+
+body {
+  font-family: Lexend, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .app-layout {
   display: flex;
   flex-direction: column;
@@ -44,5 +51,11 @@ Navbar {
 footer,
 FooterComp {
   flex-shrink: 0;
+}
+
+body {
+  font-family: Lexend, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 </style>

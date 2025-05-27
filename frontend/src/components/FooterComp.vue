@@ -61,7 +61,6 @@ import logoX from "../assets/logo-x.svg";
 footer {
   background-color: rgb(61, 58, 58);
   color: #fff;
-  width: 100%;
   padding: 18px 10px 0 10px;
 }
 
@@ -133,7 +132,7 @@ footer {
   text-align: center;
   font-size: 0.95rem;
   margin-top: 10px;
-  padding-bottom: 8px;
+  padding: 8px;
   color: #ffffff;
   border-top: 1px solid #444;
 }
