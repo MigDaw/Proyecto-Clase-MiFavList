@@ -3,13 +3,31 @@
     <h1>Contacto</h1>
     <form class="form-container" @submit.prevent="enviarCorreo">
       <label for="nombre">Nombre:</label>
-      <input v-model="nombre" type="text" id="nombre" required placeholder="Tu nombre" />
+      <input
+        v-model="nombre"
+        type="text"
+        id="nombre"
+        required
+        placeholder="Tu nombre"
+      />
 
       <label for="email">Correo electrónico:</label>
-      <input v-model="email" type="email" id="email" required placeholder="Tu correo" />
+      <input
+        v-model="email"
+        type="email"
+        id="email"
+        required
+        placeholder="Tu correo"
+      />
 
       <label for="asunto">Asunto:</label>
-      <input v-model="asunto" type="text" id="asunto" required placeholder="Asunto" />
+      <input
+        v-model="asunto"
+        type="text"
+        id="asunto"
+        required
+        placeholder="Asunto"
+      />
 
       <label for="mensaje">Mensaje:</label>
       <textarea
@@ -35,7 +53,7 @@
 import { ref } from "vue";
 import api from "../axios";
 import { useToast } from "vue-toastification";
-import '../assets/estilos/spinner.css';
+import "../assets/estilos/spinner.css";
 
 const toast = useToast();
 
@@ -80,9 +98,17 @@ const enviarCorreo = async () => {
 
 <style scoped>
 .contacto-container {
-  max-width: 500px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
   padding: 2rem;
+  background: #565256;
+  border-radius: 8px;
+  border: solid 2px #ccc;
+  box-shadow: 10px 10px 24px 0px rgba(0, 0, 0, 1);
+  -webkit-box-shadow: 10px 10px 24px 0px rgba(0, 0, 0, 1);
+  -moz-box-shadow: 10px 10px 24px 0px rgba(0, 0, 0, 1);
+  box-sizing: border-box;
 }
 
 .form-container {
@@ -107,6 +133,8 @@ const enviarCorreo = async () => {
   background: #f9f9f9;
   transition: border 0.2s;
   font-family: Lexend;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-container input[type="text"]:focus,
@@ -162,5 +190,27 @@ const enviarCorreo = async () => {
   color: #ccc !important;
   cursor: not-allowed !important;
   opacity: 0.7;
+}
+
+@media (max-width: 700px) {
+  .contacto-container {
+    padding: 1rem;
+    max-width: 95vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .contacto-container {
+    padding: 0.5rem;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+  }
+  .form-container {
+    gap: 10px;
+  }
+  .form-container button[type="submit"] {
+    width: 100%;
+  }
 }
 </style>
