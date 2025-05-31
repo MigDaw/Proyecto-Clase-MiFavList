@@ -367,9 +367,9 @@ input {
 .profile-layout {
   display: flex;
   flex-direction: row;
-  align-items: flex-start; /* Cambia a flex-start para que no se estiren verticalmente */
+  align-items: flex-start;
   justify-content: center;
-  gap: 3.5rem; /* Más separación entre columnas */
+  gap: 3.5rem; 
   background: #232323;
   padding: 40px 0;
 }
@@ -390,7 +390,7 @@ input {
 }
 
 .profile-card {
-  width: 350px; /* tamaño clásico */
+  width: 350px;
   max-width: 95vw;
   text-align: center;
   border: 2px solid #ccc;

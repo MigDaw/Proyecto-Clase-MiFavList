@@ -1,12 +1,12 @@
 <template>
   <header>
     <a href="/"><img src="../assets/Logo 1.png" alt="logo" class="logo-web" /></a>
-
+    <h1>MiFavList</h1>
     <div class="socials">
       <a href="/contacto"
         ><img :src="logoGmail" alt="Icono gmail" title="Contacto por correo electrónico"
       /></a>
-      <a href="https://github.com/MigDaw" target="_blank"
+      <a href="https://github.com/MigDaw/Proyecto-Clase-MiFavList" target="_blank"
         ><img :src="logoGithub" alt="Logo de GitHub" title="Perfil de GitHub"
       /></a>
       <a href="https://instagram.com/" target="_blank"

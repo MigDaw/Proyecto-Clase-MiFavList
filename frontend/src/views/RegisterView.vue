@@ -81,7 +81,9 @@ body{
   padding: 24px 32px;
   border: 2px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+  -webkit-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
+  -moz-box-shadow: 10px 10px 24px 0px rgba(0,0,0,1);
 }
 
 input {
