@@ -14,6 +14,7 @@ import { RouterView } from 'vue-router';
 import FooterComp from './components/FooterComp.vue';
 import HeaderComp from './components/HeaderComp.vue';
 import Navbar from './components/Navbar.vue';
+//prueba commit
 </script>
 
 <style scoped>
