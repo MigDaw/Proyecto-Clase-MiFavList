@@ -30,7 +30,7 @@
 
           <label for="status">Estado:</label>
           <select v-model="status">
-            <option value="viendo">Viendo</option>
+            <option value="En curso">En curso</option>
             <option value="completado">Completado</option>
             <option value="pendiente">Pendiente</option>
           </select>

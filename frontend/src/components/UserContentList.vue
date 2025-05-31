@@ -5,17 +5,24 @@
     <div class="top-controls">
       
       <div class="content-controls">
-        <AddUserContent
-          v-if="props.editable !== false"
-          :tipo="tipo"
-          @content-added="fetchContent"
-        />
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Buscar por título..."
-          class="search-input"
-        />
+        <template v-if="props.editable !== false">
+          <AddUserContent
+            :tipo="tipo"
+            @content-added="fetchContent"
+          />
+        </template>
+        <template v-else>
+          <div class="add-placeholder"></div>
+        </template>
+        <label>
+          Buscar por título
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Buscar por título..."
+            class="search-input"
+          />
+        </label>
         <label>
           Ordenar por:
           <select v-model="sortBy">
@@ -34,7 +41,7 @@
           Estado:
           <select v-model="statusFilter">
             <option value="">Todos</option>
-            <option value="viendo">Viendo</option>
+            <option value="En curso">En curso</option>
             <option value="completado">Completado</option>
             <option value="pendiente">Pendiente</option>
           </select>
@@ -63,7 +70,7 @@
             <label>
               Estado:
               <select v-model="item.status" class="status-select">
-                <option value="viendo">Viendo</option>
+                <option value="En curso">En curso</option>
                 <option value="completado">Completado</option>
                 <option value="pendiente">Pendiente</option>
               </select>
@@ -328,25 +335,28 @@
 
   .content-controls select {
     font-family: Lexend;
-    padding: 4px;
-    border-radius: 4px;
+    font-size: 1em;
+    padding: 0.4em 0.6em;      /* Igual que UsersView.vue */
+    border-radius: 1rem;
     border: 1px solid #ccc;
     cursor: pointer;
     margin-top: 4px;
-    font-size: 1em;
-    padding: 0.6em 1em;
-    border-radius: 1rem;
+    background: #fff;
   }
 
   .search-input {
     font-family: Lexend;
-    padding: 0.4em 0.7em;
+    padding: 0.4em 0.7em;      /* Igual que UsersView.vue */
     border-radius: 1rem;
     border: none;
     font-size: 1em;
-    margin-top: 30px;
+    margin: 5px 0;             /* Igual que .user-search */
     outline: none;
-    height: 20px;
+    height: auto;              /* Elimina height fijo */
+    background: #fff;
+    box-sizing: border-box;
+    min-width: 180px;          /* Opcional: asegura un ancho mínimo */
+    max-width: 220px;          /* Opcional: igual que en UsersView.vue */
   }
 
   .content-cards {
@@ -503,6 +513,16 @@
     margin-top: 0.8rem;
     margin-right: 1.5rem;
   }
+
+  .add-placeholder {
+    width: 170px;
+    min-width: 170px;
+    height: 38px; 
+    display: inline-block;
+    margin-top: 0.8rem;
+    margin-right: 1.5rem;
+  }
+
   @media (max-width: 700px) {
     .user-content-list {
       max-width: 98vw;
