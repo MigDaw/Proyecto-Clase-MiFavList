@@ -352,7 +352,7 @@
   .content-cards {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 3rem;
     justify-content: center;
   }
 

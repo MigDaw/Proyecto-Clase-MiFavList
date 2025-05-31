@@ -26,7 +26,7 @@
         </label>
         <label class="checkbox-label">
           <input type="checkbox" v-model="onlyPublic" class="inp-checkbox"/>
-          Sólo perfiles públicos
+          Públicos
         </label>
       </div>
     </div>
@@ -113,12 +113,16 @@ const sortedAndFilteredUsers = computed(() => {
     margin: 0;
   }
   .checkbox-label{
+    display: flex;
+    align-items: center;
     cursor: pointer;
-  }
+    gap: 0.5em; 
+    margin-top: 2px;
+    }
   .inp-checkbox{
     width: 1.2em;
     height: 1.2em;
-    margin-right: 0.5rem;
+    margin-right: 0;
     cursor: pointer;
   }
 
