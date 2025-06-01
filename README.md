@@ -1,4 +1,4 @@
-# <img src="frontend/src/assets/Logo 1.png" alt="mFL Logo" width="30"/>  MiFavList - Plataforma Social de Contenido
+# <img src="frontend/src/assets/Logo 1.png" alt="mFL Logo" width="60"/>  MiFavList - Plataforma Social de Contenido
 
 ## 📝 Descripción
 mFL es una plataforma social moderna desarrollada con Vue.js y Symfony, que permite a los usuarios compartir y gestionar contenido, interactuar con otros usuarios y mantener perfiles personalizados. La aplicación ofrece una experiencia fluida y responsive, con características como gestión de perfiles, sistema de comentarios, y gestión de contenido multimedia.
