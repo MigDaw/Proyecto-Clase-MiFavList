@@ -18,13 +18,9 @@ mFL es una plataforma social moderna desarrollada con Vue.js y Symfony, que perm
 - Vue 3 (Composition API)
 - TypeScript
 - Vue Router para navegación
-- Pinia para gestión de estado
 - Vue Toastification
-- Vue Loading Overlay
-- Vue File Agent
 - Axios para peticiones HTTP
 - CSS3 (Flexbox/Grid)
-- Font Awesome
 
 ### Backend
 - Symfony 6
