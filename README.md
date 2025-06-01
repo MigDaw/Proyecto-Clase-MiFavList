@@ -138,11 +138,3 @@ Las contribuciones son bienvenidas. Por favor, sigue estos pasos:
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
-
-## 📄 Licencia
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
-
-## ✉️ Contacto
-Miguel - [@tuTwitter](https://twitter.com/tuTwitter)
-
-Link del proyecto: [https://github.com/tu-usuario/mFL](https://github.com/tu-usuario/mFL)
