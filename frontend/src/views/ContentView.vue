@@ -52,9 +52,7 @@
   );
 
   const refreshKey = ref(0);
-  const refreshList = () => {
-    refreshKey.value++;
-  };
+  
 </script>
 
 <style scoped>

@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import ProfileView from '../views/ProfileView.vue';
 import ContentView from '../views/ContentView.vue';
-//import UsuariosView from '../views/UsuariosView.vue';
 import { userStore } from '../stores/authStore';
 import RegisterView from '../views/RegisterView.vue';
 import UsersView from '../views/UsersView.vue';
@@ -24,7 +23,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   try {
     const isLoggedIn = userStore.value != null;
     if (to.path === '/' && isLoggedIn) {
